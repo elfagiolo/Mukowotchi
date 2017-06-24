@@ -9,4 +9,19 @@ public class ButtonUtility : MonoBehaviour {
     {
         SceneManager.LoadScene(sceneIndex);
     }
+
+    public void ActivateGameobject(GameObject toActivate)
+    {
+        toActivate.SetActive(true);
+    }
+
+    public void DeactivateGameobject(GameObject toActivate)
+    {
+        toActivate.SetActive(false);
+    }
+
+    public void ToggleGameobject(GameObject go)
+    {
+        go.SetActive(!go.activeSelf);
+    }
 }
