@@ -24,4 +24,9 @@ public class ButtonUtility : MonoBehaviour {
     {
         go.SetActive(!go.activeSelf);
     }
+
+    public void ReturnToLastScene()
+    {
+        SceneManager.LoadScene(PasswordScript.lastScene);
+    }
 }
