@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class ButtonUtility : MonoBehaviour {
 
+    [SerializeField]
+    private Vector2 spawnPosition = new Vector2(0f, 0f);
+
 	public void SwitchToScene(int sceneIndex)
     {
         SceneManager.LoadScene(sceneIndex);
@@ -28,5 +31,10 @@ public class ButtonUtility : MonoBehaviour {
     public void ReturnToLastScene()
     {
         SceneManager.LoadScene(PasswordScript.lastScene);
+    }
+
+    public void SpawnFood(GameObject prefab)
+    {
+        Instantiate(prefab, spawnPosition, Quaternion.identity);
     }
 }
