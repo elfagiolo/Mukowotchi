@@ -1,56 +1,105 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MedicinePlan", menuName = "Mukowotchi/", order = 1)]
-public class Mediplan : ScriptableObject
+//[CreateAssetMenu(fileName = "MedicinePlan", menuName = "Mukowotchi/", order = 1)]
+
+public class Mediplan
 {
+    public struct NotificationInfo
+    {
+        public DateTime time;
+
+        public string title;
+
+        public string message;
+    }
+
     public struct Medicine
     {
+        //Name des Medikaments
         public string name;
 
+        //Kurze Beschreibung
         public string description;
 
-        public List<float>[] weekdays;
+        //Tage an denen die Medikation eingenommen werden soll
+        public bool[] weekdays;
+
+        //Zeit und Anzahl der Tabletteneinnahme
+        public Dictionary<float, int> times;
     }
 
-    private List<Medicine> medicinePlan;
+    public Mediplan()
+    {
+        medicineList = new List<Medicine>();
+    }
 
-    public void AddMedicine(string name, string description)
+
+    private List<Medicine> medicineList;
+
+    public void AddMedicine(string _name, string _description, bool[] _weekdays, int _hours, int _minutes, int _count)
     {
         Medicine newMed = new Medicine();
-        newMed.name = name;
-        newMed.description = description;
+        newMed.name = _name;
+        newMed.description = _description;
 
-        //Init lists for times
-        newMed.weekdays = new List<float>[7];
-        for(int i = 0; i < 7; i++)
-        {
-            newMed.weekdays[i] = new List<float>();
-        }
-    }
+        //Init arrays & Lists
+        newMed.weekdays = new bool[7];
+        newMed.times = new Dictionary<float, int>();
 
-    public void AddTime(int iMedicineIndex, int iWeekDay, int iHours, int iMinutes)
-    {
-        float fTime = iHours + iMinutes / 60;
-        List<float> tmp = medicinePlan[iMedicineIndex].weekdays[iWeekDay];
-        if (!tmp.Contains(fTime))
-            medicinePlan[iMedicineIndex].weekdays[iWeekDay].Add(fTime);
+        _weekdays.CopyTo(newMed.weekdays, 0);
+
+        float fTime = _hours + _minutes / 60.0f;
+        Dictionary<float, int> tmp = newMed.times;
+        if (!tmp.ContainsKey(fTime))
+            newMed.times.Add(fTime, _count);
         else
-            Debug.LogWarning( Mathf.FloorToInt(fTime) + Mathf.FloorToInt((fTime % 1.0f) * 10) +  " is already set for the given day");
+            Debug.LogWarning(Mathf.FloorToInt(fTime) + Mathf.FloorToInt((fTime % 1.0f) * 10.0f) + " is already set for this Medication");
+
+        medicineList.Add(newMed);
     }
 
-    public Medicine GetMedicine(int iMedicineIndex)
+    public List<NotificationInfo> CheckMedicineForToday()
     {
-        return medicinePlan[iMedicineIndex];
+        DateTime Now = DateTime.Now;
+        List<NotificationInfo> info = new List<NotificationInfo>();
+        int dayOfWeek = (int)Now.DayOfWeek;
+        foreach(Medicine med in medicineList)
+        {
+            if(med.weekdays[dayOfWeek-1])
+            {
+                foreach(float time in med.times.Keys)
+                {
+                    NotificationInfo newInfo = new NotificationInfo();
+                    int[] hourMinute = ReformatTimeToInt(time);
+                    newInfo.time = new DateTime(Now.Year, Now.Month, Now.Day, hourMinute[0], hourMinute[1], 0);
+                    newInfo.title = "Medikamentenwecker";
+                    newInfo.message = "Muki muss " + (med.name) + "einnehmen.";
+                    info.Add(newInfo);
+                }
+            }
+        }
+
+        return info;
+
     }
 
-    public string ReformatTime(float fTime)
+    public int[] ReformatTimeToInt(float fTime)
+    {
+        int[] hourMinute = new int[2];
+        hourMinute[0] = (int)Mathf.Floor(fTime);
+        hourMinute[1] = (int)((fTime - hourMinute[0]) * 60.0f);
+        Debug.Log(fTime + "->" + hourMinute[0] + ":" + hourMinute[1]);
+        return hourMinute;
+    }
+
+    public string ReformatTimeToString(float fTime)
     {
         float hour = Mathf.Floor(fTime);
         float minute = (fTime - hour) * 60.0f;
         string time = hour.ToString("00") + ":" + ((fTime - hour) * 60.0f).ToString("00");
-
         Debug.Log(fTime + "->" + time);
         return time;
     }
