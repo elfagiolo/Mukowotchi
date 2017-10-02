@@ -19,11 +19,13 @@ public class Edible : MonoBehaviour  {
     private SpriteRenderer m_renderer;
 
     private int bites;
+    private int originalSorting;
 
     private void Awake()
     {
         m_renderer = GetComponent<SpriteRenderer>();
         bites = 0;
+        originalSorting = m_renderer.sortingOrder;
     }
 
     private void Start()
@@ -36,11 +38,15 @@ public class Edible : MonoBehaviour  {
         Vector2 mousePosition = Input.mousePosition;
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
         transform.position = mousePosition;
+
+        m_renderer.sortingOrder = originalSorting + 10;
     }
 
     private void OnMouseUp()
     {
         transform.position = m_v3OriginalPosition;
+
+        m_renderer.sortingOrder = originalSorting;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
