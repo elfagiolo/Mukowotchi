@@ -3,16 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Eatable : MonoBehaviour  {
+public class Edible : MonoBehaviour  {
 
     //[SerializeField]
     //private int m_iNumOfBites = 2;
 
+    [SerializeField]
+    private int fettwert = 0;
+    [SerializeField]
+    public Sprite[] sprites;
+
     private float m_fEatingSpeed = 0.5f;
     private Vector3 m_v3OriginalPosition;
-    private float timer = 0f;
+    private float m_fTimer = 0f;
+    private SpriteRenderer m_renderer;
+
+    private int bites;
 
     private void Awake()
+    {
+        m_renderer = GetComponent<SpriteRenderer>();
+        bites = 0;
+    }
+
+    private void Start()
     {
         m_v3OriginalPosition = transform.position;
     }
@@ -38,16 +52,28 @@ public class Eatable : MonoBehaviour  {
     {
         if (collision.CompareTag("Muki"))
         {
-            timer += Time.deltaTime;
+            m_fTimer += Time.deltaTime;
 
-            if (timer >= m_fEatingSpeed)
-                Eaten();
+            if (m_fTimer >= m_fEatingSpeed)
+            {
+                m_fTimer = 0f;
+                BiteOff();
+            }
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        timer = 0f;
+        m_fTimer = 0f;
+    }
+
+    void BiteOff()
+    {
+        bites++;
+        if (bites < sprites.Length)
+            m_renderer.sprite = sprites[bites];
+        else
+            Eaten();
     }
 
     void Eaten()
