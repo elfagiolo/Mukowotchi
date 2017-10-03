@@ -83,6 +83,13 @@ public class Edible : MonoBehaviour  {
     // for each bite
     void BiteOff()
     {
+        // check if the mouth is full rn for normal food
+        if (m_foodType == FoodType.NORMAL)
+        {
+            if (Muki.s_instance.m_bMouthIsFull)
+                return;
+        }
+
         m_iBites++;
         if (m_iBites < m_arrSprites.Length)
             m_renderer.sprite = m_arrSprites[m_iBites];
