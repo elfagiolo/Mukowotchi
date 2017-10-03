@@ -109,11 +109,11 @@ public class TherapiePlan
 
         hourMinute[0] = Mathf.FloorToInt(fTime);
         float hours60 = fTime * 60.0f;
-        Debug.Log(hours60);
+        //Debug.Log(hours60);
         hourMinute[1] = (int)(hours60 - hourMinute[0] * 60.0f);
         hourMinute[0] = Mathf.Clamp(hourMinute[0], 0, 23);
 
-        Debug.Log(fTime + "->" + hourMinute[0] + ":" + hourMinute[1]);
+        //Debug.Log(fTime + "->" + hourMinute[0] + ":" + hourMinute[1]);
         return hourMinute;
     }
 }

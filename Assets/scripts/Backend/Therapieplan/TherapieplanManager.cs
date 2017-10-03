@@ -75,9 +75,9 @@ public class TherapieplanManager : MonoBehaviour
     public SportTyp sportTyp;
 
     //Daten die zum Hinzufügen gespeichert werden
-    private List<float> times;
-    private List<int> counts;
-    private List<float> durations;
+    public List<float> times;
+    public List<int> counts;
+    public List<float> durations;
 
 
     //Save and Load
@@ -243,7 +243,7 @@ public class TherapieplanManager : MonoBehaviour
 
     public void AddTime()
     {
-        Debug.Log("Adding Time:" + hour + ":" + minute.ToString("D2") + "with Count:" + count + "and Duration:" + duration);
+        //Debug.Log("Adding Time:" + hour + ":" + minute.ToString("D2") + "with Count:" + count + "and Duration:" + duration);
         times.Add(TherapiePlan.TimeIntToFloat(hour, minute));
         if (therapieTyp == TherapieTyp.MEDIKAMENT)
             counts.Add(count);
@@ -252,9 +252,17 @@ public class TherapieplanManager : MonoBehaviour
         timesListPanel.UpdateList(times, counts, durations);
     }
 
-    public void RemoveTime()
+    public void RemoveTime(float _time)
     {
-        times.Remove(TherapiePlan.TimeIntToFloat(hour, minute));
+        int index = times.IndexOf(_time);
+        //Debug.Log("Attempt remove " + _time + " at " + index);
+        if (therapieTyp == TherapieTyp.MEDIKAMENT)
+            counts.RemoveAt(index);
+        else if (therapieTyp == TherapieTyp.INHALATION)
+            durations.RemoveAt(index);
+
+        times.Remove(_time);
+        timesListPanel.UpdateList(times, counts, durations);
     }
 
     public void SetWeekDay(int i, bool b)

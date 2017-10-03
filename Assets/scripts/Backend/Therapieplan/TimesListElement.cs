@@ -14,9 +14,9 @@ public class TimesListElement : MonoBehaviour
     public Color normalColor;
     public Color fadedColor;
 
-    float time;
-    int count;
-    float duration;
+    private float ftime;
+    private int icount;
+    private float fduration;
 
     public void Start()
     {
@@ -25,6 +25,9 @@ public class TimesListElement : MonoBehaviour
     
     public void SetValues(float _time, int _count, float _duration)
     {
+        ftime = _time;
+        icount = _count;
+        fduration = _duration;
         int[] time = TherapiePlan.TimeFloatToInt(_time);
         time_hour.text = time[0].ToString();
         time_minute.text = time[1].ToString("D2");
@@ -39,5 +42,10 @@ public class TimesListElement : MonoBehaviour
 
         duration_min.color = _duration == 0.0f ? fadedColor : normalColor;
         duration_sec.color = _duration == 0.0f ? fadedColor : normalColor;
+    }
+
+    public void DeleteMe()
+    {
+        TherapieplanManager.instance.RemoveTime(ftime);
     }
 }
