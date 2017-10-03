@@ -28,31 +28,6 @@ public class KreonManager : MonoBehaviour {
         m_transKreonSpawn = transform.GetChild(0);
     }
 
-    //void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.K))
-    //    {
-    //        SpawnKreons(3);
-    //    }
-    //}
-
-    //void OnEnable()
-    //{
-    //    SceneManager.sceneLoaded += OnLevelFinishedLoading;
-    //}
-
-    //void OnDisable()
-    //{
-    //    SceneManager.sceneLoaded -= OnLevelFinishedLoading;
-    //}
-
-    //void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
-    //{
-    //    Debug.Log("Level " + scene.buildIndex + " Loaded");
-    //    Debug.Log(scene.name);
-    //    Debug.Log(mode);
-    //}
-
     public void SpawnKreons(int number)
     {
         if (coroutine_KreonSpawner != null)
