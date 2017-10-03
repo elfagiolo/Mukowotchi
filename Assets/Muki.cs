@@ -54,6 +54,7 @@ public class Muki : MonoBehaviour {
             case m_iKitchenID:
                 m_transform.position = m_v3KitchenPosition;
                 break;
+            case 3: break;
             default: m_transform.position = m_v3OriginalPosition;
                 break;
         }
@@ -62,7 +63,6 @@ public class Muki : MonoBehaviour {
     // called when the game is terminated
     void OnDisable()
     {
-        Debug.Log("OnDisable");
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }
