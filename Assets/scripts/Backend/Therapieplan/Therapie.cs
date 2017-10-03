@@ -7,55 +7,82 @@ public class Therapie
 {
     [SerializeField]
     //Name der Therapie
-    protected string name;
+    protected string therapieName;
+
+    public string Name
+    {
+        get
+        {
+            return therapieName;
+        }
+        set
+        {
+            therapieName = value;
+        }
+    }
 
     [SerializeField]
     //Kurze Beschreibung
     protected string description;
-       
+    public string Description
+    {
+        get
+        {
+            return description;
+        }
+        set
+        {
+            description = value;
+        }
+    }
+
     [SerializeField]
     //Wochentage
     protected bool[] weekdays;
+    public bool[] Weekdays
+    {
+        get
+        {
+            return weekdays;
+        }
+        set
+        {
+            value.CopyTo(weekdays,0);
+        }
+    }
 
     [SerializeField]
     //Uhrzeit
     protected List<float> times;
+    public List<float> Times
+    {
+        get
+        {
+            return times;
+        }
+    }
 
     [SerializeField]
     //Color
-    protected Color color;
-
-    public void SetName(string _name)
-    {
-        name = _name;
-    }
-
-    public void SetDescription(string _description)
-    {
-        name = _description;
-    }
+    //protected Color color;
 
     public void SetWeekDay(int _index, bool _checked)
     {
         weekdays[_index] = _checked;
     }
 
-    public void SetWeekDays(bool[] _weekDays)
-    {
-        _weekDays.CopyTo(weekdays, 0);
-    }
-
     public void AddTime(float _time)
     {
         times.Add(_time);
     }
+
     public void RemoveTime(float _time)
     {
         times.Remove(_time);
     }
 
-    public void SetColor(Color _color)
+    /*public void SetColor(Color _color)
     {
         color = _color;
-    }
+    }*/
 }

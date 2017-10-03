@@ -18,7 +18,7 @@ public class Physiotherapie : Therapie
 
     public Physiotherapie()
     {
-        name = "Sport";
+        therapieName = "Sport";
         description = "Unterschiedliche Sportübungen";
 
         weekdays = new bool[7];
