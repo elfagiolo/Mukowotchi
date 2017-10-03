@@ -19,6 +19,7 @@ public class KreonManager : MonoBehaviour {
     private Transform m_transKreonSpawn;
     private Coroutine coroutine_KreonSpawner;
     private int m_iKreonsInMouth = 0;
+    private Stack<GameObject> m_KreonStack = new Stack<GameObject>();
 
     void Awake()
     {
@@ -46,6 +47,7 @@ public class KreonManager : MonoBehaviour {
             var kreon = Instantiate(prefab_miniKreon);
             kreon.transform.parent = m_transKreonSpawn;
             kreon.transform.localPosition = new Vector3(0f, m_iKreons * m_fDistance, 0f);
+            m_KreonStack.Push(kreon);
             m_iKreons++;
             m_iKreonsToSpawn--;
             yield return new WaitForSeconds(m_fSpawnDuration);
@@ -59,7 +61,31 @@ public class KreonManager : MonoBehaviour {
 
     public void SwallowKreons()
     {
+        // update the kreon account
         m_iKreons -= m_iKreonsInMouth;
-        print("current kreon account = " + m_iKreons);
+
+        // destroy the mini kreons on the side if they are there
+        for(int i=0; i<m_iKreonsInMouth; ++i)
+        {
+            if (m_KreonStack.Count > 0)
+            {
+                var kreon = m_KreonStack.Pop();
+                Destroy(kreon);
+            }
+            else
+                break;
+        }
+
+        // give star if the right amount is met
+        if (m_iKreons == 0)
+        {
+            Score.s_instance.AddStars(1);
+        }
+        // reset to zero if it is under
+        else if (m_iKreons < 0)
+            m_iKreons = 0;
+
+        // reset kreons in the mouth
+        m_iKreonsInMouth = 0;
     }
 }
