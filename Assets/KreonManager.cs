@@ -27,13 +27,13 @@ public class KreonManager : MonoBehaviour {
         m_transKreonSpawn = transform.GetChild(0);
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            SpawnKreons(3);
-        }
-    }
+    //void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.K))
+    //    {
+    //        SpawnKreons(3);
+    //    }
+    //}
 
     //void OnEnable()
     //{

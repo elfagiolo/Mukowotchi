@@ -9,23 +9,23 @@ public class Edible : MonoBehaviour  {
     //private int m_iNumOfBites = 2;
 
     [SerializeField]
-    private int fettwert = 0;
+    private int m_iFettwert = 0;
     [SerializeField]
-    public Sprite[] sprites;
+    public Sprite[] m_arrSprites;
 
     private float m_fEatingSpeed = 0.5f;
     private Vector3 m_v3OriginalPosition;
     private float m_fTimer = 0f;
     private SpriteRenderer m_renderer;
 
-    private int bites;
-    private int originalSorting;
+    private int m_iBites;
+    private int m_iOrigSorting;
 
     private void Awake()
     {
         m_renderer = GetComponent<SpriteRenderer>();
-        bites = 0;
-        originalSorting = m_renderer.sortingOrder;
+        m_iBites = 0;
+        m_iOrigSorting = m_renderer.sortingOrder;
     }
 
     private void Start()
@@ -39,14 +39,14 @@ public class Edible : MonoBehaviour  {
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
         transform.position = mousePosition;
 
-        m_renderer.sortingOrder = originalSorting + 10;
+        m_renderer.sortingOrder = m_iOrigSorting + 10;
     }
 
     private void OnMouseUp()
     {
         transform.position = m_v3OriginalPosition;
 
-        m_renderer.sortingOrder = originalSorting;
+        m_renderer.sortingOrder = m_iOrigSorting;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -73,17 +73,25 @@ public class Edible : MonoBehaviour  {
         m_fTimer = 0f;
     }
 
+    // for each bite
     void BiteOff()
     {
-        bites++;
-        if (bites < sprites.Length)
-            m_renderer.sprite = sprites[bites];
+        m_iBites++;
+        if (m_iBites < m_arrSprites.Length)
+            m_renderer.sprite = m_arrSprites[m_iBites];
         else
             Eaten();
     }
 
+    // gets eaten and swallowed
     void Eaten()
     {
+        // spawn kreons
+        var kSpawner = KreonManager.s_instance;
+        if (!kSpawner)
+            kSpawner.SpawnKreons(m_iFettwert);
+
+        // destroy this food
         Destroy(this.gameObject);
     }
 }
