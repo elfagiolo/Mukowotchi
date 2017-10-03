@@ -14,10 +14,11 @@ public class KreonManager : MonoBehaviour {
     [SerializeField]
     private float m_fSpawnDuration = 0.5f;
 
-    private int m_iKreons = 0; // number of active kreons right now
+    private int m_iKreons = 0; // number of needed kreons rn
     private int m_iKreonsToSpawn = 0;
     private Transform m_transKreonSpawn;
     private Coroutine coroutine_KreonSpawner;
+    private int m_iKreonsInMouth = 0;
 
     void Awake()
     {
@@ -74,5 +75,16 @@ public class KreonManager : MonoBehaviour {
             m_iKreonsToSpawn--;
             yield return new WaitForSeconds(m_fSpawnDuration);
         }
+    }
+
+    public void AddKreonToMouth()
+    {
+        m_iKreonsInMouth++;
+    }
+
+    public void SwallowKreons()
+    {
+        m_iKreons -= m_iKreonsInMouth;
+        print("current kreon account = " + m_iKreons);
     }
 }

@@ -8,10 +8,17 @@ public class Edible : MonoBehaviour  {
     //[SerializeField]
     //private int m_iNumOfBites = 2;
 
+    public enum FoodType
+    {
+        NORMAL, PILL, KREON, WATER
+    };
+
     [SerializeField]
     private int m_iFettwert = 0;
     [SerializeField]
-    public Sprite[] m_arrSprites;
+    private Sprite[] m_arrSprites;
+    [SerializeField]
+    private FoodType m_foodType = FoodType.NORMAL;
 
     private float m_fEatingSpeed = 0.5f;
     private Vector3 m_v3OriginalPosition;
@@ -86,10 +93,27 @@ public class Edible : MonoBehaviour  {
     // gets eaten and swallowed
     void Eaten()
     {
-        // spawn kreons
-        var kSpawner = KreonManager.s_instance;
-        if (!kSpawner)
-            kSpawner.SpawnKreons(m_iFettwert);
+        switch (m_foodType)
+        {
+            case FoodType.NORMAL: 
+                // spawn kreons
+                var kSpawner = KreonManager.s_instance;
+                if (kSpawner != null) {
+                    kSpawner.SpawnKreons(m_iFettwert);
+                }
+                break;
+            case FoodType.KREON:
+                KreonManager.s_instance.AddKreonToMouth();
+                Muki.s_instance.addPill();
+                break;
+            case FoodType.PILL:
+                Muki.s_instance.addPill();
+                break;
+            case FoodType.WATER:
+                Muki.s_instance.SwallowWithWater();
+                KreonManager.s_instance.SwallowKreons();
+                break;
+        }
 
         // destroy this food
         Destroy(this.gameObject);
