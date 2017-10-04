@@ -81,14 +81,15 @@ public class TherapieplanManager : MonoBehaviour
 
 
     //Save and Load
-    protected string savePath;
-
-
-
+    private string savePath;
+    
     public void Awake()
     {
         instance = this;
-        savePath = Application.persistentDataPath + "/save.dat";
+        savePath = Application.persistentDataPath + "/therapiePlan.dat";
+        times = new List<float>();
+        counts = new List<int>();
+        durations = new List<float>();
         Reset();
     }
     public void Start()
@@ -100,8 +101,8 @@ public class TherapieplanManager : MonoBehaviour
     }
 
     /**
-          * Saves the save data to the disk
-          */
+     * Saves the save data to the disk
+     */
     public void SaveDataToDisk()
     {
 
@@ -125,6 +126,7 @@ public class TherapieplanManager : MonoBehaviour
         }
     }
 
+    //Reset the Values of both this class and the inputfields/toggles
     private void Reset()
     {
         therapieName = "";
@@ -148,18 +150,23 @@ public class TherapieplanManager : MonoBehaviour
             tgWeekDays[i].isOn = true;
         }
 
-        times = new List<float>();
-        counts = new List<int>();
-        durations = new List<float>();
+        //Clear the Lists
+        times.Clear();
+        counts.Clear();
+        durations.Clear();
+        
+        //Remove all Elements from the TimeListPanel
         timesListPanel.RemoveAll();
     }
 
+    //Switch To the TypeChoicePanel
     public void SwitchToTypeChoice()
     {
         therapiePlanCanvas.SetActive(false);
         therapieTypCanvas.SetActive(true);
     }
 
+    //Choose your Type and go to the NewTherapyPanel
     public void ChooseType(int typeIndex)
     {
         therapieTyp = (TherapieTyp)typeIndex;
@@ -168,6 +175,7 @@ public class TherapieplanManager : MonoBehaviour
         Reset();
     }
 
+    //Cancel whatever you where doing and return to the Therapyplan
     public void Cancel()
     {
         therapieNeuCanvas.SetActive(false);
@@ -243,25 +251,36 @@ public class TherapieplanManager : MonoBehaviour
 
     public void AddTime()
     {
-        //Debug.Log("Adding Time:" + hour + ":" + minute.ToString("D2") + "with Count:" + count + "and Duration:" + duration);
-        times.Add(TherapiePlan.TimeIntToFloat(hour, minute));
+        float fTime = TherapiePlan.TimeIntToFloat(hour, minute);
+
+        //If this timeslot is already taken, do not add it
+        if (times.Contains(fTime)) return;
+
+        //Add timeslot to list
+        times.Add(fTime);
+        //Add count/duration depending on TherapieType
         if (therapieTyp == TherapieTyp.MEDIKAMENT)
             counts.Add(count);
         else if (therapieTyp == TherapieTyp.INHALATION)
             durations.Add(duration);
+        //Update the timeListPanel to show the new Timeslot
         timesListPanel.UpdateList(times, counts, durations);
     }
 
     public void RemoveTime(float _time)
     {
+        //Find the Index of the timeslot given
         int index = times.IndexOf(_time);
-        //Debug.Log("Attempt remove " + _time + " at " + index);
+
+        //Use the index to delete from counts/durations depending on TherapieType
         if (therapieTyp == TherapieTyp.MEDIKAMENT)
             counts.RemoveAt(index);
         else if (therapieTyp == TherapieTyp.INHALATION)
             durations.RemoveAt(index);
 
+        //Remove the timeslot
         times.Remove(_time);
+        //Update the timeListpanel to remove the timeslot as well
         timesListPanel.UpdateList(times, counts, durations);
     }
 
@@ -299,6 +318,6 @@ public class TherapieplanManager : MonoBehaviour
 
     public void ScheduleAllNotificationsForToday()
     {
-        notifier.Notify(therapiePlan.CheckMedicineForToday());
+        notifier.Notify(therapiePlan.GetTherapieForXDaysFromNow(7));
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 public class BasicNotification : MonoBehaviour
 {
@@ -10,6 +13,15 @@ public class BasicNotification : MonoBehaviour
     private int _number = 1;
     public Color32 _notifyColor;
     private bool _sticky = false;
+
+    //Save and Load
+    private string savePath;
+    private int highestID;
+
+    public void Awake()
+    {
+        savePath = Application.persistentDataPath + "/NotifyID.dat";
+    }
 
     public void Notify(TherapiePlan.NotificationInfo[] infoStack)
     {
@@ -22,12 +34,12 @@ public class BasicNotification : MonoBehaviour
 
     public void Notify(TherapiePlan.NotificationInfo info)
     {
-        Debug.Log("Scheduling Notification: " + info.title + "|" + info.message + "|" + _number + "|" + info.time.Hour);
+        Debug.Log("Scheduling Notification: " + info.title + "|" + info.time.DayOfWeek.ToString() + info.time.Hour + info.time.Minute);
         /*
 		 * Unfortunately, from Unity 5.0, providing Android resources became obsolete.
 		 * Before Unity 5.0, you can provide the name of the drawable in the folder Plugins/Android/res/drawable.
 		 */
-        Notification notification = new Notification("medi", info.title, info.message);
+        Notification notification = new Notification(info.title, info.message);
         //notification.SetContentInfo("");
         notification.EnableSound(true);
 
