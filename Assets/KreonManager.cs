@@ -82,7 +82,7 @@ public class KreonManager : MonoBehaviour {
         // give star if the right amount is met
         if (m_iKreons == 0)
         {
-            Score.s_instance.AddStars(1);
+            Score.s_instance.AddStar(2);
         }
         // reset to zero if it is under
         else if (m_iKreons < 0)
