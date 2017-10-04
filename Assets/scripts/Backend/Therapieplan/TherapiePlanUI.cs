@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +14,8 @@ public enum TherapieTyp
 public class TherapiePlanUI : MonoBehaviour
 {
     public static TherapiePlanUI instance;
+
+    private TherapiePlanManager manager;
 
     //Canvas zum ein und ausschalten
     public GameObject therapiePlanCanvas;
@@ -35,16 +35,9 @@ public class TherapiePlanUI : MonoBehaviour
     //Unterschiedliche MedikamentenBilder
     private Sprite[] sprites;
 
-    //Therapieplan
-    [SerializeField]
-    private TherapiePlan therapiePlan;
-
     //Panels für Listenerstellung
     public TimesListPanel timesListPanel;
     public TherapieListePanel therapiePanel;
-
-    //Notifier Referenz
-    public BasicNotification notifier;
     
     //Über das UI editierbare Variablen
 
@@ -78,15 +71,10 @@ public class TherapiePlanUI : MonoBehaviour
     public List<float> times;
     public List<int> counts;
     public List<float> durations;
-
-
-    //Save and Load
-    private string savePath;
     
     public void Awake()
     {
         instance = this;
-        savePath = Application.persistentDataPath + "/therapiePlan.dat";
         times = new List<float>();
         counts = new List<int>();
         durations = new List<float>();
@@ -94,37 +82,10 @@ public class TherapiePlanUI : MonoBehaviour
     }
     public void Start()
     {
-        therapiePlan = new TherapiePlan();
-        LoadDataFromDisk();
-        therapiePlan.InitTherapieListe();
-        therapiePanel.UpdateList(therapiePlan.Therapien);
+        manager = TherapiePlanManager.instance;
+        therapiePanel.UpdateList(manager.TherapiePlan.Therapien);
     }
 
-    /**
-     * Saves the save data to the disk
-     */
-    public void SaveDataToDisk()
-    {
-
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(savePath);
-        bf.Serialize(file, therapiePlan);
-        file.Close();
-    }
-
-    /**
-     * Loads the save data from the disk
-     */
-    public void LoadDataFromDisk()
-    {
-        if (File.Exists(savePath))
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(savePath, FileMode.Open);
-            therapiePlan = (TherapiePlan)bf.Deserialize(file);
-            file.Close();
-        }
-    }
 
     //Reset the Values of both this class and the inputfields/toggles
     private void Reset()
@@ -202,22 +163,23 @@ public class TherapiePlanUI : MonoBehaviour
         {
             therapieTyp = TherapieTyp.MEDIKAMENT;
             counts = (_therapie as Medikament).Counts;
-            therapiePlan.RemoveMedikament(_therapie as Medikament);
+            manager.TherapiePlan.RemoveMedikament(_therapie as Medikament);
         }
         else if(_therapie is Inhalation)
         {
             therapieTyp = TherapieTyp.INHALATION;
             durations = (_therapie as Inhalation).Durations;
-            therapiePlan.RemoveInhalation(_therapie as Inhalation);
+            manager.TherapiePlan.RemoveInhalation(_therapie as Inhalation);
         }
         else
         {
-            therapiePlan.RemovePhysiotherapie(_therapie as Physiotherapie);
+            manager.TherapiePlan.RemovePhysiotherapie(_therapie as Physiotherapie);
         }
         therapiePlanCanvas.SetActive(false);
         therapieNeuCanvas.SetActive(true);
         timesListPanel.UpdateList(times, counts, durations);
-        therapiePanel.UpdateList(therapiePlan.Therapien);
+        therapiePanel.UpdateList(manager.TherapiePlan.Therapien);
+        manager.needsToSave = true;
     }
 
 
@@ -227,17 +189,17 @@ public class TherapiePlanUI : MonoBehaviour
         {
             case TherapieTyp.MEDIKAMENT:
                 Medikament medi = new Medikament(therapieName, description, weekdays, times, color, counts);
-                therapiePlan.AddMedikament(medi);
+                manager.TherapiePlan.AddMedikament(medi);
                 therapiePanel.AddElement(medi);
                 break;
             case TherapieTyp.INHALATION:
                 Inhalation inha = new Inhalation(therapieName, description, weekdays, times, color, durations);
-                therapiePlan.AddInhalation(inha);
+                manager.TherapiePlan.AddInhalation(inha);
                 therapiePanel.AddElement(inha);
                 break;
             case TherapieTyp.PHYSIOTHERAPIE:
                 Physiotherapie physio = new Physiotherapie(weekdays, times, sportTyp);
-                therapiePlan.AddPhysiotherapie(physio);
+                manager.TherapiePlan.AddPhysiotherapie(physio);
                 therapiePanel.AddElement(physio);
                 break;
             default:
@@ -246,7 +208,7 @@ public class TherapiePlanUI : MonoBehaviour
         therapieNeuCanvas.SetActive(false);
         therapiePlanCanvas.SetActive(true);
         Reset();
-
+        manager.needsToSave = true;
     }
 
     public void AddTime()
@@ -316,8 +278,17 @@ public class TherapiePlanUI : MonoBehaviour
         duration = TherapiePlan.TimeIntToFloat(durMin, durSec);
     }
 
-    public void ScheduleAllNotificationsForToday()
+    public void QuitMenu()
     {
-        notifier.Notify(therapiePlan.GetTherapieForXDaysFromNow(7));
+        if(manager.needsToSave)
+        {
+            manager.SaveDataToDisk();
+            manager.ScheduleTherapyForSetDays();
+        }
+    }
+
+    public void ScheduleTherapy()
+    {
+        manager.ScheduleTherapyForSetDays();
     }
 }
