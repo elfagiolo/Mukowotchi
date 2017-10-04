@@ -28,6 +28,7 @@ public class Edible : MonoBehaviour  {
     private int m_iBites;
     private int m_iOrigSorting;
     private bool m_bEating = false;
+    private Animator m_mukiAnim;
 
     private void Awake()
     {
@@ -68,8 +69,10 @@ public class Edible : MonoBehaviour  {
         if (collision.CompareTag("Muki"))
         {
             m_bEating = true;
-            int eating = collision.GetComponent<Animator>().GetInteger("eating");
-            collision.GetComponent<Animator>().SetInteger("eating",eating + 1);
+            if (m_mukiAnim == null)
+                m_mukiAnim = collision.GetComponent<Animator>();
+            int eating = m_mukiAnim.GetInteger("eating");
+            m_mukiAnim.SetInteger("eating",eating + 1);
         }
     }
 
@@ -78,10 +81,10 @@ public class Edible : MonoBehaviour  {
         if (collision.CompareTag("Muki"))
         {
             m_bEating = false;
+            m_fTimer = 0f;
+            int eating = m_mukiAnim.GetInteger("eating");
+            m_mukiAnim.SetInteger("eating", eating - 1);
         }
-        m_fTimer = 0f;
-        int eating = collision.GetComponent<Animator>().GetInteger("eating");
-        collision.GetComponent<Animator>().SetInteger("eating", eating - 1);
     }
 
     void Eating()
@@ -123,6 +126,8 @@ public class Edible : MonoBehaviour  {
                 if (kSpawner != null) {
                     kSpawner.SpawnKreons(m_iFettwert);
                 }
+                MukiNeeds.s_instance.UpdateDateAndTime(true);
+                MukiNeeds.s_instance.Consumes(100f, true);
                 break;
             case FoodType.KREON:
                 KreonManager.s_instance.AddKreonToMouth();
@@ -134,10 +139,22 @@ public class Edible : MonoBehaviour  {
             case FoodType.WATER:
                 Muki.s_instance.SwallowWithWater();
                 KreonManager.s_instance.SwallowKreons();
+                MukiNeeds.s_instance.UpdateDateAndTime(false);
+                MukiNeeds.s_instance.Consumes(100f, false);
                 break;
         }
 
         // destroy this food
         Destroy(this.gameObject);
+    }
+
+    void OnDisable()
+    {
+        if (m_bEating)
+        {
+            m_bEating = false;
+            int eating = m_mukiAnim.GetInteger("eating");
+            m_mukiAnim.SetInteger("eating", eating - 1);
+        }
     }
 }
