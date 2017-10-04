@@ -27,6 +27,7 @@ public class Edible : MonoBehaviour  {
 
     private int m_iBites;
     private int m_iOrigSorting;
+    private bool m_bEating = false;
 
     private void Awake()
     {
@@ -40,44 +41,58 @@ public class Edible : MonoBehaviour  {
         m_v3OriginalPosition = transform.position;
     }
 
+    private void Update()
+    {
+        if (m_bEating)
+            Eating();
+    }
+
     private void OnMouseDrag()
     {
         Vector2 mousePosition = Input.mousePosition;
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
         transform.position = mousePosition;
 
-        m_renderer.sortingOrder = m_iOrigSorting + 10;
+        m_renderer.sortingOrder = m_iOrigSorting + 5;
     }
 
     private void OnMouseUp()
     {
-        transform.position = m_v3OriginalPosition;
+        //transform.position = m_v3OriginalPosition;
 
-        m_renderer.sortingOrder = m_iOrigSorting;
+        //m_renderer.sortingOrder = m_iOrigSorting;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        OnTriggerStay2D(collision);
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
         if (collision.CompareTag("Muki"))
         {
-            m_fTimer += Time.deltaTime;
-
-            if (m_fTimer >= m_fEatingSpeed)
-            {
-                m_fTimer = 0f;
-                BiteOff();
-            }
+            m_bEating = true;
+            int eating = collision.GetComponent<Animator>().GetInteger("eating");
+            collision.GetComponent<Animator>().SetInteger("eating",eating + 1);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (collision.CompareTag("Muki"))
+        {
+            m_bEating = false;
+        }
         m_fTimer = 0f;
+        int eating = collision.GetComponent<Animator>().GetInteger("eating");
+        collision.GetComponent<Animator>().SetInteger("eating", eating - 1);
+    }
+
+    void Eating()
+    {
+        m_fTimer += Time.deltaTime;
+
+        if (m_fTimer >= m_fEatingSpeed)
+        {
+            m_fTimer = 0f;
+            BiteOff();
+        }
     }
 
     // for each bite
