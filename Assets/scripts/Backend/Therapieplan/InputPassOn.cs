@@ -8,7 +8,7 @@ public class InputPassOn : MonoBehaviour
     public void PassNameToManager()
     {
         string text = GetComponent<InputField>().text;
-        TherapieplanManager.instance.therapieName = text;
+        TherapiePlanUI.instance.therapieName = text;
     }
 
     public void PassHourToManager()
@@ -16,7 +16,7 @@ public class InputPassOn : MonoBehaviour
         string text = GetComponent<InputField>().text;
         int i = Mathf.Clamp(int.Parse(text), 0, 23);
         GetComponent<InputField>().text = i.ToString();
-        TherapieplanManager.instance.SetHour(i);
+        TherapiePlanUI.instance.SetHour(i);
     }
 
     public void FixMinutes()
@@ -31,27 +31,27 @@ public class InputPassOn : MonoBehaviour
         string text = GetComponent<InputField>().text;
         int i = Mathf.Clamp(int.Parse(text), 0, 59);
         GetComponent<InputField>().text = i.ToString();
-        TherapieplanManager.instance.SetMinute(i);
+        TherapiePlanUI.instance.SetMinute(i);
     }
     public void PassCountToManager()
     {
         string text = GetComponent<InputField>().text;
         int i = int.Parse(text);
-        TherapieplanManager.instance.SetCount(i);
+        TherapiePlanUI.instance.SetCount(i);
     }
 
     public void PassDurationMinute()
     {
         string text = GetComponent<InputField>().text;
         int i = Mathf.Max(int.Parse(text), 0);
-        TherapieplanManager.instance.SetDurationMinute(i);
+        TherapiePlanUI.instance.SetDurationMinute(i);
     }
 
     public void PassDurationSecond()
     {
         string text = GetComponent<InputField>().text;
         int i = Mathf.Clamp(int.Parse(text), 0, 59);
-        TherapieplanManager.instance.SetDurationSeconds(i);
+        TherapiePlanUI.instance.SetDurationSeconds(i);
     }
 
 }

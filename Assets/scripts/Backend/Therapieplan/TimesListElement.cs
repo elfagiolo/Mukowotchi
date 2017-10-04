@@ -46,6 +46,6 @@ public class TimesListElement : MonoBehaviour
 
     public void DeleteMe()
     {
-        TherapieplanManager.instance.RemoveTime(ftime);
+        TherapiePlanUI.instance.RemoveTime(ftime);
     }
 }

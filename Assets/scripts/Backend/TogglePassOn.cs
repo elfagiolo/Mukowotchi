@@ -8,6 +8,6 @@ public class TogglePassOn : MonoBehaviour
     public void PassToManager(int i)
     {
         bool isOn = GetComponent<Toggle>().isOn;
-        TherapieplanManager.instance.SetWeekDay(i, isOn);
+        TherapiePlanUI.instance.SetWeekDay(i, isOn);
     }
 }

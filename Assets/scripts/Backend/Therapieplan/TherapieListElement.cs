@@ -98,7 +98,7 @@ public class TherapieListElement : MonoBehaviour
 
     public void EditMe()
     {
-        TherapieplanManager.instance.EditTherapie(therapie);
+        TherapiePlanUI.instance.EditTherapie(therapie);
     }
 
 }

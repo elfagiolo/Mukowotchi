@@ -20,16 +20,53 @@ public class BasicNotification : MonoBehaviour
 
     public void Awake()
     {
-        savePath = Application.persistentDataPath + "/NotifyID.dat";
+        savePath = Application.persistentDataPath + "/Notification.dat";
+        LoadDataFromDisk();
     }
+
+    /**
+     * Saves the save data to the disk
+     */
+    public void SaveDataToDisk()
+    {
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(savePath);
+        bf.Serialize(file, highestID);
+        file.Close();
+        Debug.Log("Saved HighestID " + highestID);
+    }
+
+    /**
+     * Loads the save data from the disk
+     */
+    public void LoadDataFromDisk()
+    {
+        if (File.Exists(savePath))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(savePath, FileMode.Open);
+            highestID = (int)bf.Deserialize(file);
+            file.Close();
+            Debug.Log("Loaded HighestID " + highestID);
+        }
+    }
+
 
     public void Notify(TherapiePlan.NotificationInfo[] infoStack)
     {
-        //NotificationManager.CancelAll();
+        _number = 1;
+        for (int i = 1; i < highestID;i++)
+        {
+            NotificationManager.Cancel(i);
+        }
+
         foreach (TherapiePlan.NotificationInfo info in infoStack)
         {
             Notify(info);
         }
+        highestID = _number;
+        SaveDataToDisk();
     }
 
     public void Notify(TherapiePlan.NotificationInfo info)
