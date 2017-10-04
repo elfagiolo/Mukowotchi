@@ -24,7 +24,7 @@ public static class NotificationManager
 		if (Application.platform != RuntimePlatform.Android)
 			return;
 
-		_javaNotificationManager.CallStatic ("showNotification", id, notification._javaUnityNotification);
+		_javaNotificationManager.CallStatic ("showNotification", "muki", id, notification._javaUnityNotification);
 	}
 
 	/// <summary>
@@ -40,7 +40,7 @@ public static class NotificationManager
 		if (Application.platform != RuntimePlatform.Android)
 			return;
 
-		_javaNotificationManager.CallStatic ("showNotification", id, notification._javaUnityNotification, (long) (triggerAt.ToUniversalTime() - EPOCH).TotalMilliseconds, interval);
+		_javaNotificationManager.CallStatic ("showNotification", "muki", id, notification._javaUnityNotification, (long) (triggerAt.ToUniversalTime() - EPOCH).TotalMilliseconds, interval);
 	}
 
 	/// <summary>
@@ -68,13 +68,13 @@ public static class NotificationManager
 		if (Application.platform != RuntimePlatform.Android)
 			return;
 
-		_javaNotificationManager.CallStatic ("cancel", id);	
+		_javaNotificationManager.CallStatic ("cancel", "muki", id);
 	}
-		
-	/// <summary>
-	/// Cancels all notifications.
-	/// </summary>
-	public static void CancelAll ()
+
+    /// <summary>
+    /// Cancels all notifications.
+    /// </summary>
+    public static void CancelAll ()
 	{
 		if (Application.platform != RuntimePlatform.Android)
 			return;
