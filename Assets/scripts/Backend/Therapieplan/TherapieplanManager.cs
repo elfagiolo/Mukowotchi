@@ -62,7 +62,6 @@ public class TherapiePlanManager : MonoBehaviour
      */
     public void SaveDataToDisk()
     {
-
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(savePath);
         bf.Serialize(file, therapiePlan);

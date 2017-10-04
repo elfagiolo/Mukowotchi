@@ -61,6 +61,9 @@ public class KreonManager : MonoBehaviour {
 
     public void SwallowKreons()
     {
+        if (m_iKreonsInMouth == 0)
+            return;
+
         // update the kreon account
         m_iKreons -= m_iKreonsInMouth;
 
@@ -79,7 +82,7 @@ public class KreonManager : MonoBehaviour {
         // give star if the right amount is met
         if (m_iKreons == 0)
         {
-            Score.s_instance.AddStars(1);
+            Score.s_instance.AddStar(2);
         }
         // reset to zero if it is under
         else if (m_iKreons < 0)
