@@ -28,7 +28,7 @@ public class BasicNotification : MonoBehaviour
 		 * Before Unity 5.0, you can provide the name of the drawable in the folder Plugins/Android/res/drawable.
 		 */
         Notification notification = new Notification("medi", info.title, info.message);
-        notification.SetContentInfo("NotificationID " +  _number);
+        //notification.SetContentInfo("");
         notification.EnableSound(true);
 
         /*
@@ -48,7 +48,7 @@ public class BasicNotification : MonoBehaviour
         notification.SetLargeIcon(LargeIcon);
 
         if (_number > 1)
-            notification.SetNumber(_number);
+            //notification.SetNumber(_number);
 
         notification.SetSticky(_sticky);
         NotificationManager.ShowNotification(_number, notification, info.time);
