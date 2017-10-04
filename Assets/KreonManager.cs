@@ -61,6 +61,9 @@ public class KreonManager : MonoBehaviour {
 
     public void SwallowKreons()
     {
+        if (m_iKreonsInMouth == 0)
+            return;
+
         // update the kreon account
         m_iKreons -= m_iKreonsInMouth;
 
