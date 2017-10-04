@@ -15,7 +15,8 @@ public class BasicNotification : MonoBehaviour
 
     public void Notify(TherapiePlan.NotificationInfo[] infoStack)
     {
-        foreach(TherapiePlan.NotificationInfo info in infoStack)
+        NotificationManager.CancelAll();
+        foreach (TherapiePlan.NotificationInfo info in infoStack)
         {
             Notify(info);
         }
@@ -51,7 +52,6 @@ public class BasicNotification : MonoBehaviour
             notification.SetNumber(_number);
 
         notification.SetSticky(_sticky);
-
         NotificationManager.ShowNotification(_number, notification);
         NotificationManager.ShowNotification(_number, notification, info.time);
         ++_number;
