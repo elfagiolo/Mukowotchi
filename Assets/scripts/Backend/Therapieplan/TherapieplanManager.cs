@@ -299,6 +299,6 @@ public class TherapieplanManager : MonoBehaviour
 
     public void ScheduleAllNotificationsForToday()
     {
-        //notifier.Notify(therapiePlan.CheckMedicineForToday().ToArray());
+        notifier.Notify(therapiePlan.CheckMedicineForToday());
     }
 }

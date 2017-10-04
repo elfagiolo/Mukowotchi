@@ -1,11 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 
 [System.Serializable]
 public class TherapiePlan
 {
+    public struct NotificationInfo
+    {
+        public string title;
+        public string message;
+        public System.DateTime time;
+    }
+
     [System.NonSerialized]
     List<Therapie> therapieListe;
     [SerializeField]
@@ -115,5 +123,31 @@ public class TherapiePlan
 
         //Debug.Log(fTime + "->" + hourMinute[0] + ":" + hourMinute[1]);
         return hourMinute;
+    }
+
+    public NotificationInfo[] CheckMedicineForToday()
+    {
+        List<NotificationInfo> infoStack = new List<NotificationInfo>();
+
+        DateTime currentTime = DateTime.Now;
+        int currentDayOfWeek = (int)currentTime.DayOfWeek;
+
+        foreach(Therapie therapie in therapieListe)
+        {
+            if(therapie.Weekdays[currentDayOfWeek])
+            {
+                foreach(float time in therapie.Times)
+                {
+                    NotificationInfo info;
+                    info.title = therapie.Name;
+                    info.message = "Muki hat jetzt eine Therapie! Bitte hilf Muki dabei, gesund zu bleiben.";
+                    int[] iTime = TimeFloatToInt(time);
+                    info.time = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, iTime[0], iTime[1], 0);
+                    infoStack.Add(info);
+                }
+            }
+        }
+
+        return infoStack.ToArray();
     }
 }
