@@ -131,10 +131,11 @@ public class TherapiePlan
 
         DateTime currentTime = DateTime.Now;
         int currentDayOfWeek = (int)currentTime.DayOfWeek;
+        Debug.Log("The current day of week is:" + currentDayOfWeek);
 
         foreach(Therapie therapie in therapieListe)
         {
-            if(therapie.Weekdays[currentDayOfWeek])
+            if(therapie.Weekdays[currentDayOfWeek-1])
             {
                 foreach(float time in therapie.Times)
                 {
