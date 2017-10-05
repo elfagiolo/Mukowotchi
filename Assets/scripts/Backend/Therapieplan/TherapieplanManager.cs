@@ -40,7 +40,7 @@ public class TherapiePlanManager : MonoBehaviour
         else
             instance = this;
 
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
         savePath = Application.persistentDataPath + "/therapiePlan.dat";
         //init new List
         therapiePlan = new TherapiePlan();

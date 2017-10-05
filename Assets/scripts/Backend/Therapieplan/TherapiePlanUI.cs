@@ -83,6 +83,7 @@ public class TherapiePlanUI : MonoBehaviour
     public void Start()
     {
         manager = TherapiePlanManager.instance;
+
         therapiePanel.UpdateList(manager.TherapiePlan.Therapien);
     }
 
