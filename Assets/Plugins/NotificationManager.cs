@@ -5,7 +5,9 @@ public static class NotificationManager
 {
 	private static DateTime EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 	private static AndroidJavaClass _javaNotificationManager;
-		
+
+	private static string tag = "muki";
+
 	static NotificationManager ()
 	{
 		if (Application.platform != RuntimePlatform.Android)
@@ -24,6 +26,8 @@ public static class NotificationManager
 		if (Application.platform != RuntimePlatform.Android)
 			return;
 
+		//_javaNotificationManager.CallStatic ("showNotification", tag, id, notification._javaUnityNotification);
+
 		_javaNotificationManager.CallStatic ("showNotification", id, notification._javaUnityNotification);
 	}
 
@@ -39,6 +43,8 @@ public static class NotificationManager
 	{
 		if (Application.platform != RuntimePlatform.Android)
 			return;
+
+		//_javaNotificationManager.CallStatic ("showNotification", tag, id, notification._javaUnityNotification, (long) (triggerAt.ToUniversalTime() - EPOCH).TotalMilliseconds, interval);
 
 		_javaNotificationManager.CallStatic ("showNotification", id, notification._javaUnityNotification, (long) (triggerAt.ToUniversalTime() - EPOCH).TotalMilliseconds, interval);
 	}
@@ -67,6 +73,8 @@ public static class NotificationManager
 	{
 		if (Application.platform != RuntimePlatform.Android)
 			return;
+
+		//_javaNotificationManager.CallStatic ("cancel", tag, id);
 
 		_javaNotificationManager.CallStatic ("cancel", id);
 	}

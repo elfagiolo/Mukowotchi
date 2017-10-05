@@ -83,7 +83,7 @@ public class BasicNotification : MonoBehaviour
         /*
 		 * Requires VIBRATE permission.
 		 */
-        notification.SetVibrate(new long[] { 200, 100, 100});
+        notification.SetVibrate(new long[] {200, 400, 100, 400, 100});
 
         /*
 		 * Lights or LED notification are only working when screen is off.
