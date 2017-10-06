@@ -32,20 +32,20 @@ public class TimesListElement : MonoBehaviour
         time_hour.text = time[0].ToString();
         time_minute.text = time[1].ToString("D2");
 
-        countField.text = _count.ToString();
-        countField.color = _count == 0 ? fadedColor : normalColor;
+		countField.text = icount.ToString();
+		countField.color = icount == 0 ? fadedColor : normalColor;
 
 
         int[] duration = TherapiePlan.TimeFloatToInt(_duration);
         duration_min.text = duration[0].ToString();
         duration_sec.text = duration[1].ToString("D2");
 
-        duration_min.color = _duration == 0.0f ? fadedColor : normalColor;
-        duration_sec.color = _duration == 0.0f ? fadedColor : normalColor;
+		duration_min.color = fduration == 0.0f ? fadedColor : normalColor;
+		duration_sec.color = fduration == 0.0f ? fadedColor : normalColor;
     }
 
     public void DeleteMe()
     {
-        TherapieplanManager.instance.RemoveTime(ftime);
+        TherapiePlanUI.instance.RemoveTime(ftime);
     }
 }

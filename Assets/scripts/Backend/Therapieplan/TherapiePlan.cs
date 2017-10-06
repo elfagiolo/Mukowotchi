@@ -1,11 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 
 [System.Serializable]
 public class TherapiePlan
 {
+    public struct NotificationInfo
+    {
+        public string title;
+        public string message;
+        public System.DateTime time;
+        public int therapieIndex;
+    }
+
     [System.NonSerialized]
     List<Therapie> therapieListe;
     [SerializeField]
@@ -115,5 +124,59 @@ public class TherapiePlan
 
         //Debug.Log(fTime + "->" + hourMinute[0] + ":" + hourMinute[1]);
         return hourMinute;
+    }
+
+    //Check the Therapieplan and get all notificationInfo for the given Day
+    public NotificationInfo[] GetTherapiesForDay(DateTime _day, bool considerTime)
+    {
+        //Initialize list and days data
+        List<NotificationInfo> infoStack = new List<NotificationInfo>();
+        int dayOfWeek = (int)_day.DayOfWeek;
+        dayOfWeek = (dayOfWeek - 1) < 0 ? 6 : dayOfWeek - 1;
+
+        foreach (Therapie therapie in therapieListe)
+        {
+            if (therapie.Weekdays[dayOfWeek])
+            {
+                foreach (float time in therapie.Times)
+                {
+                    int[] iTime = TimeFloatToInt(time);
+                    DateTime therapieTime = new DateTime(_day.Year, _day.Month, _day.Day, iTime[0], iTime[1], 0);
+                    if (!considerTime || therapieTime > _day)
+                    {
+                        NotificationInfo info;
+                        info.title = therapie.Name;
+                        info.message = "Muki hat jetzt eine Therapie!";
+                        info.time = therapieTime;
+                        info.therapieIndex = therapie.Times.IndexOf(time);
+                        infoStack.Add(info);
+                    }
+                }
+            }
+        }
+
+
+        return infoStack.ToArray();
+    }
+
+    public NotificationInfo[] GetTherapyForToday()
+    {
+        return GetTherapiesForDay(DateTime.Now, true);
+    }
+
+    public NotificationInfo[] GetTherapieForXDaysFromNow(int daysToCheck)
+    {
+        List<NotificationInfo> infoStack = new List<NotificationInfo>();
+        int currentDay = DateTime.Now.Day;
+        infoStack.AddRange(GetTherapyForToday());
+        for(int i = 1; i < daysToCheck; i++)
+        {
+            DateTime day = DateTime.Now;
+            day = day.AddDays(i);
+            Debug.Log("Checking DateTime:" + day.ToString());
+            infoStack.AddRange(GetTherapiesForDay(day, false));
+        }
+
+        return infoStack.ToArray();
     }
 }
