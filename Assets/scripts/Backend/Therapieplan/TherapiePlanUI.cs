@@ -32,12 +32,19 @@ public class TherapiePlanUI : MonoBehaviour
 
     public Toggle[] tgWeekDays;
 
-	public Image imageTabletten;
+	public Image imageThumb;
+    public Image imageNextColor;
+    public Image imagePreviousColor;
+    public Image imageNextImage;
+    public Image imagePreviousImage;
+
+    public Sprite inhalationsImage;
+    public Sprite phyioImage;
 
     //Unterschiedliche MedikamentenBilder
-    public Sprite[] sprites;
+    public Sprite[] imagesTabletten;
 
-	public Color[] colors;
+	public Color[] colorsImage;
 
     //Panels für Listenerstellung
     public TimesListPanel timesListPanel;
@@ -64,7 +71,7 @@ public class TherapiePlanUI : MonoBehaviour
 
     //Anzahl (Nur bei Medikamenten)
     public int count = 1;
-	public int imageID;
+	public int imageIndex;
     //Dauer (Nur bei Inhalation) in Minuten
     public float duration = 5.0f; //Default 5 min.
     private int durMin;
@@ -88,7 +95,6 @@ public class TherapiePlanUI : MonoBehaviour
     public void Start()
     {
         manager = TherapiePlanManager.instance;
-		ShowActiveColor ();
         therapiePanel.UpdateList(manager.TherapiePlan.Therapien);
     }
 
@@ -124,6 +130,12 @@ public class TherapiePlanUI : MonoBehaviour
         
         //Remove all Elements from the TimeListPanel
         timesListPanel.RemoveAll();
+        imageThumb.color = Color.white;
+
+        imageNextColor.gameObject.SetActive(false);
+        imagePreviousColor.gameObject.SetActive(false);
+        imageNextImage.gameObject.SetActive(false);
+        imagePreviousImage.gameObject.SetActive(false);
     }
 
     //Switch To the TypeChoicePanel
@@ -140,6 +152,15 @@ public class TherapiePlanUI : MonoBehaviour
         therapieTypCanvas.SetActive(false);
         therapieNeuCanvas.SetActive(true);
         Reset();
+        ShowActiveImage();
+        if (therapieTyp == TherapieTyp.MEDIKAMENT)
+        {
+            imageNextColor.gameObject.SetActive(true);
+            imagePreviousColor.gameObject.SetActive(true);
+            imageNextImage.gameObject.SetActive(true);
+            imagePreviousImage.gameObject.SetActive(true);
+            ShowActiveColor();
+        }
     }
 
     //Cancel whatever you where doing and return to the Therapyplan
@@ -196,7 +217,7 @@ public class TherapiePlanUI : MonoBehaviour
         switch(therapieTyp)
         {
             case TherapieTyp.MEDIKAMENT:
-			Medikament medi = new Medikament(therapieName, description, weekdays, times, imageID, colors[colorIndex], counts);
+			Medikament medi = new Medikament(therapieName, description, weekdays, times, imageIndex, colorsImage[colorIndex], counts);
                 manager.TherapiePlan.AddMedikament(medi);
                 therapiePanel.AddElement(medi);
                 break;
@@ -288,26 +309,61 @@ public class TherapiePlanUI : MonoBehaviour
 
 	public void ShowActiveColor()
 	{
-		imageTabletten.color = colors [colorIndex];
+        int nextIndex = colorIndex + 1 < colorsImage.Length ? colorIndex + 1 : 0;
+        imageNextColor.color = colorsImage[nextIndex];
+        int previousIndex = colorIndex - 1 >= 0 ? colorIndex - 1 : colorsImage.Length - 1;
+        imagePreviousColor.color = colorsImage[previousIndex];
+        imageThumb.color = colorsImage [colorIndex];
 	}
 
 	public void NextColor()
 	{
-		colorIndex = colorIndex + 1 < colors.Length ? colorIndex + 1 : 0; 
+		colorIndex = colorIndex + 1 < colorsImage.Length ? colorIndex + 1 : 0; 
 		ShowActiveColor ();
 	}
 
 	public void PreviousColor()
 	{
-		colorIndex = colorIndex - 1 >= 0 ? colorIndex - 1 : colors.Length-1; 
+		colorIndex = colorIndex - 1 >= 0 ? colorIndex - 1 : colorsImage.Length-1; 
 		ShowActiveColor ();
 	}
 
-	public void FindColorIndex(Color c)
+    public void NextImage()
+    {
+        imageIndex = imageIndex + 1 < imagesTabletten.Length ? imageIndex + 1 : 0;
+        ShowActiveImage();
+    }
+
+    public void PreviousImage()
+    {
+        imageIndex = imageIndex - 1 >= 0 ? imageIndex - 1 : imagesTabletten.Length - 1;
+        ShowActiveImage();
+    }
+
+    public void ShowActiveImage()
+    {
+        if(therapieTyp == TherapieTyp.MEDIKAMENT)
+        {
+            imageThumb.sprite = imagesTabletten[imageIndex];
+            return;
+        }
+        if (therapieTyp == TherapieTyp.INHALATION)
+        {
+            imageThumb.sprite = inhalationsImage;
+            return;
+        }
+        if(therapieTyp == TherapieTyp.PHYSIOTHERAPIE)
+        {
+            imageThumb.sprite = phyioImage;
+            return;
+        }
+    }
+
+    public void FindColorIndex(Color c)
 	{
-		for (int i = 0; i < colors.Length; i++) 
+		for (int i = 0; i < colorsImage.Length; i++) 
 		{
-			if(colors[i] == c)
+			if(colorsImage[i] == c)
 				colorIndex = i;
 		}
 	}
