@@ -21,14 +21,12 @@ public class Inhalation : Therapie
         durations = new List<float>();
     }
 
-    public Inhalation(string _name, string _description, bool[] _weekdays, List<float> _times,/* Sprite _image,*/ Color _color, List<float> _durations):this()
+    public Inhalation(string _name, string _description, bool[] _weekdays, List<float> _times, List<float> _durations):this()
     {
         therapieName = _name;
         description = _description;
         _weekdays.CopyTo(weekdays, 0);
         times.AddRange(_times);
-        //image = _image;
-        //color = _color;
 
         durations.AddRange(_durations);
     }

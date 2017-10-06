@@ -32,8 +32,12 @@ public class TherapiePlanUI : MonoBehaviour
 
     public Toggle[] tgWeekDays;
 
+	public Image imageTabletten;
+
     //Unterschiedliche MedikamentenBilder
-    private Sprite[] sprites;
+    public Sprite[] sprites;
+
+	public Color[] colors;
 
     //Panels für Listenerstellung
     public TimesListPanel timesListPanel;
@@ -56,10 +60,11 @@ public class TherapiePlanUI : MonoBehaviour
 
     public bool[] weekdays;
 
-    public Color color;
+    public int colorIndex = 0;
 
     //Anzahl (Nur bei Medikamenten)
     public int count = 1;
+	public int imageID;
     //Dauer (Nur bei Inhalation) in Minuten
     public float duration = 5.0f; //Default 5 min.
     private int durMin;
@@ -83,7 +88,7 @@ public class TherapiePlanUI : MonoBehaviour
     public void Start()
     {
         manager = TherapiePlanManager.instance;
-
+		ShowActiveColor ();
         therapiePanel.UpdateList(manager.TherapiePlan.Therapien);
     }
 
@@ -164,6 +169,8 @@ public class TherapiePlanUI : MonoBehaviour
         {
             therapieTyp = TherapieTyp.MEDIKAMENT;
             counts = (_therapie as Medikament).Counts;
+			FindColorIndex((_therapie as Medikament).Color);
+			ShowActiveColor ();
             manager.TherapiePlan.RemoveMedikament(_therapie as Medikament);
         }
         else if(_therapie is Inhalation)
@@ -189,12 +196,12 @@ public class TherapiePlanUI : MonoBehaviour
         switch(therapieTyp)
         {
             case TherapieTyp.MEDIKAMENT:
-                Medikament medi = new Medikament(therapieName, description, weekdays, times, color, counts);
+			Medikament medi = new Medikament(therapieName, description, weekdays, times, imageID, colors[colorIndex], counts);
                 manager.TherapiePlan.AddMedikament(medi);
                 therapiePanel.AddElement(medi);
                 break;
             case TherapieTyp.INHALATION:
-                Inhalation inha = new Inhalation(therapieName, description, weekdays, times, color, durations);
+			Inhalation inha = new Inhalation(therapieName, description, weekdays, times, durations);
                 manager.TherapiePlan.AddInhalation(inha);
                 therapiePanel.AddElement(inha);
                 break;
@@ -278,6 +285,32 @@ public class TherapiePlanUI : MonoBehaviour
         durSec = i;
         duration = TherapiePlan.TimeIntToFloat(durMin, durSec);
     }
+
+	public void ShowActiveColor()
+	{
+		imageTabletten.color = colors [colorIndex];
+	}
+
+	public void NextColor()
+	{
+		colorIndex = colorIndex + 1 < colors.Length ? colorIndex + 1 : 0; 
+		ShowActiveColor ();
+	}
+
+	public void PreviousColor()
+	{
+		colorIndex = colorIndex - 1 >= 0 ? colorIndex - 1 : colors.Length-1; 
+		ShowActiveColor ();
+	}
+
+	public void FindColorIndex(Color c)
+	{
+		for (int i = 0; i < colors.Length; i++) 
+		{
+			if(colors[i] == c)
+				colorIndex = i;
+		}
+	}
 
     public void QuitMenu()
     {

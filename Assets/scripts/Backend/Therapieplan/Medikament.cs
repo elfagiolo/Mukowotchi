@@ -14,6 +14,26 @@ public class Medikament : Therapie
         }
     }
 
+	private int imageIndex;
+
+	private float r;
+	private float g;
+	private float b;
+
+	public Color Color
+	{
+		get 
+		{
+			return new Color (r, g, b);
+		}
+		set 
+		{
+			r = value.r;
+			g = value.g;
+			b = value.b;
+		}
+	}
+
     public Medikament()
     {
         weekdays = new bool[7];
@@ -21,14 +41,14 @@ public class Medikament : Therapie
         counts = new List<int>();
     }
 
-    public Medikament(string _name, string _description, bool[] _weekdays, List<float> _times,/* Sprite _image,*/ Color _color, List<int> _counts):this()
+    public Medikament(string _name, string _description, bool[] _weekdays, List<float> _times, int _imageIndex, Color _color, List<int> _counts):this()
     {
         therapieName = _name;
         description = _description;
         _weekdays.CopyTo(weekdays, 0);
         times.AddRange(_times);
-        //image = _image;
-        //color = _color;
+		imageIndex = _imageIndex;
+		Color = _color;
         counts.AddRange(_counts);
     }
 

@@ -62,9 +62,6 @@ public class Therapie
         }
     }
 
-    [SerializeField]
-    //Color
-    //protected Color color;
 
     public void SetWeekDay(int _index, bool _checked)
     {
@@ -80,9 +77,4 @@ public class Therapie
     {
         times.Remove(_time);
     }
-
-    /*public void SetColor(Color _color)
-    {
-        color = _color;
-    }*/
 }
