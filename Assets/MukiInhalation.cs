@@ -55,7 +55,6 @@ public class MukiInhalation : MonoBehaviour {
         {
             Score s = Score.s_instance;
             if (s) s.QueueStars(m_iStarsEarned, 0);
-
             OnEnd.Invoke();
         }
     }
