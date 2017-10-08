@@ -37,4 +37,9 @@ public class ButtonUtility : MonoBehaviour {
     {
         Instantiate(prefab, spawnPosition, Quaternion.identity);
     }
+
+    public void SetSportTyp(int typ)
+    {
+        MukiSport.s_selectedSportTyp = (SportTyp)typ;
+    }
 }
