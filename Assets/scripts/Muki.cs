@@ -49,6 +49,8 @@ public class Muki : MonoBehaviour {
     // called second
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        m_animator.SetInteger("eating", 0);
+
         switch (scene.buildIndex)
         {
             case m_iKitchenID:
