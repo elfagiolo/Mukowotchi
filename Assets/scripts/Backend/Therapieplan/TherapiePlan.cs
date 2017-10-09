@@ -173,7 +173,7 @@ public class TherapiePlan
         {
             DateTime day = DateTime.Now;
             day = day.AddDays(i);
-            Debug.Log("Checking DateTime:" + day.ToString());
+            //Debug.Log("Checking DateTime:" + day.ToString());
             infoStack.AddRange(GetTherapiesForDay(day, false));
         }
 

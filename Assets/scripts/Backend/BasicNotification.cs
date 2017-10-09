@@ -34,7 +34,7 @@ public class BasicNotification : MonoBehaviour
         FileStream file = File.Create(savePath);
         bf.Serialize(file, highestID);
         file.Close();
-        Debug.Log("Saved HighestID " + highestID);
+        //Debug.Log("Saved HighestID " + highestID);
     }
 
     /**
@@ -48,7 +48,7 @@ public class BasicNotification : MonoBehaviour
             FileStream file = File.Open(savePath, FileMode.Open);
             highestID = (int)bf.Deserialize(file);
             file.Close();
-            Debug.Log("Loaded HighestID " + highestID);
+            //Debug.Log("Loaded HighestID " + highestID);
         }
     }
 
@@ -71,7 +71,7 @@ public class BasicNotification : MonoBehaviour
 
     public void Notify(TherapiePlan.NotificationInfo info)
     {
-        Debug.Log("Scheduling Notification: " + info.title + "|" + info.time.DayOfWeek.ToString() + info.time.Hour + info.time.Minute);
+        //Debug.Log("Scheduling Notification: " + info.title + "|" + info.time.DayOfWeek.ToString() + info.time.Hour + info.time.Minute);
         /*
 		 * Unfortunately, from Unity 5.0, providing Android resources became obsolete.
 		 * Before Unity 5.0, you can provide the name of the drawable in the folder Plugins/Android/res/drawable.
