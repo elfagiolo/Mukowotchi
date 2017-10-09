@@ -16,7 +16,14 @@ public class MedizinButton : MonoBehaviour
             int dayOfWeek = (int)System.DateTime.Now.DayOfWeek - 1;
             dayOfWeek = dayOfWeek < 0 ? 6 : dayOfWeek;
 
-            foreach(TherapiePlan.TherapieInfo therapieInfo in manager.TherapiePlan.GetTherapieInfoFor(dayOfWeek, time))
+            //If the time is from yesterday
+            if (time > System.DateTime.Now.Hour)
+            {
+                dayOfWeek -= 1;
+                dayOfWeek = dayOfWeek < 0 ? 6 : dayOfWeek;
+            }
+
+            foreach (TherapiePlan.TherapieInfo therapieInfo in manager.TherapiePlan.GetTherapieInfoFor(dayOfWeek, time))
             {
                 Therapie t = manager.TherapiePlan.Therapien[therapieInfo.index];
                 if (therapieInfo.count != 0)

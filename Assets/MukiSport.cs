@@ -20,7 +20,9 @@ public class MukiSport : MonoBehaviour {
     private float m_fTimer = 0f;
     private Coroutine coroutine_SetTimer = null;
     private bool m_bSwitchedSides = false;
-    
+
+    private List<float> physioTimes;
+
     public float Progress { get { return m_fTimer / m_fSportDuration; } }
 
     void Awake()
@@ -29,7 +31,35 @@ public class MukiSport : MonoBehaviour {
         m_sportObject = transform.GetChild((int)s_selectedSportTyp).gameObject;
         m_sportObject.SetActive(true);
     }
-	
+
+    //Init the Physiotimes list and fill it with the physiotherapy times from activetherapies
+    void InitPhysioTimes()
+    {
+        TherapiePlanManager manager = TherapiePlanManager.instance;
+        physioTimes = new List<float>();
+        foreach (float time in manager.AktiveTherapieZeiten)
+        {
+            int dayOfWeek = (int)System.DateTime.Now.DayOfWeek - 1;
+            dayOfWeek = dayOfWeek < 0 ? 6 : dayOfWeek;
+
+            //If the time is from yesterday
+            if (time > System.DateTime.Now.Hour)
+            {
+                dayOfWeek -= 1;
+                dayOfWeek = dayOfWeek < 0 ? 6 : dayOfWeek;
+            }
+
+            foreach (TherapiePlan.TherapieInfo therapieInfo in manager.TherapiePlan.GetTherapieInfoFor(dayOfWeek, time))
+            {
+                Therapie t = manager.TherapiePlan.Therapien[therapieInfo.index];
+                Physiotherapie p = t as Physiotherapie;
+                if(p != null)
+                {
+                    physioTimes.Add(time);
+                }
+            }
+        }
+    }
 	public void StartUebung(bool switchSides)
     {
         if (switchSides && !m_bSwitchedSides)
@@ -63,6 +93,8 @@ public class MukiSport : MonoBehaviour {
             Score s = Score.s_instance;
             if (s) s.QueueStars(3, 1);
             OnEnd.Invoke();
+            if(physioTimes.Count > 0)
+                TherapiePlanManager.instance.RemoveActiveTherapy(physioTimes[physioTimes.Count-1]);
         }
         else
             OnSwitchSides.Invoke();
