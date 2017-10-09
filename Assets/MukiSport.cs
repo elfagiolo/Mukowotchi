@@ -30,6 +30,7 @@ public class MukiSport : MonoBehaviour {
         // turn on the right gameobject
         m_sportObject = transform.GetChild((int)s_selectedSportTyp).gameObject;
         m_sportObject.SetActive(true);
+        InitPhysioTimes();
     }
 
     //Init the Physiotimes list and fill it with the physiotherapy times from activetherapies
@@ -92,9 +93,9 @@ public class MukiSport : MonoBehaviour {
         {
             Score s = Score.s_instance;
             if (s) s.QueueStars(3, 1);
+            if (physioTimes.Count > 0)
+                TherapiePlanManager.instance.RemoveActiveTherapy(physioTimes[physioTimes.Count - 1]);
             OnEnd.Invoke();
-            if(physioTimes.Count > 0)
-                TherapiePlanManager.instance.RemoveActiveTherapy(physioTimes[physioTimes.Count-1]);
         }
         else
             OnSwitchSides.Invoke();

@@ -168,33 +168,34 @@ public class TherapiePlanManager : MonoBehaviour
 
     IEnumerator CheckTherapyPlan()
     {
-        DateTime current = DateTime.Today;
-        int dayOfWeek = (int)current.DayOfWeek;
+        DateTime today = DateTime.Today;
+        int dayOfWeek = (int)today.DayOfWeek;
         dayOfWeek = (dayOfWeek - 1) < 0 ? 6 : dayOfWeek - 1;
 
         while (true)
         {
             Debug.Log("Checking for active Therapies");
-            if(current != DateTime.Today)
+            if(today != DateTime.Today)
             {
-                current = DateTime.Now;
-                dayOfWeek = (int)current.DayOfWeek;
+                today = DateTime.Today;
+                dayOfWeek = (int)today.DayOfWeek;
                 dayOfWeek = (dayOfWeek - 1) < 0 ? 6 : dayOfWeek - 1;
                 latestTimeCheckedToday = 0;
             }
 
             if(therapiePlan.calendar[dayOfWeek].Count > 0)
             {
-                float currentTime = TherapiePlan.TimeIntToFloat(current.Hour, current.Minute);
+                float currentTime = TherapiePlan.TimeIntToFloat(DateTime.Now.Hour, DateTime.Now.Minute);
                 foreach(float time in therapiePlan.calendar[dayOfWeek].Keys)
                 {
+                    Debug.Log("checking " + time + " at " +  currentTime + "with latest" + latestTimeCheckedToday + "res:" + (time <= currentTime) + "|" + (time >= currentTime - 1.0f) + "|" + (time > latestTimeCheckedToday));
                     //if the time is younger than the current time by less than an hour (current: 14:30 time:13:30 - 14:30)
                     if (time > latestTimeCheckedToday && time <= currentTime && time >= currentTime - 1.0f)
                     {
                         Debug.Log("Adding " + time + "to actives" + (time > latestTimeCheckedToday) + latestTimeCheckedToday);
                         aktiveTherapieZeiten.Add(time);
+                        latestTimeCheckedToday = time;
                     }
-                    latestTimeCheckedToday = time;
                 }
             }
 
