@@ -5,6 +5,17 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
+[Serializable]
+public struct DataToSave
+{
+    public TherapiePlan plan;
+    public List<float> actives;
+    public int savingDay;
+    public int savingMonth;
+    public int savingYear;
+    public float latestTime;
+}
+
 [RequireComponent(typeof(BasicNotification))]
 public class TherapiePlanManager : MonoBehaviour
 {
@@ -24,6 +35,23 @@ public class TherapiePlanManager : MonoBehaviour
 
     private bool hasScheduledOnStart = false;
 
+
+    //Aktive Therapien
+    private float checkInterval = 60.0f; //Once per Minute
+
+    public List<float> aktiveTherapieZeiten;
+    public List<float> AktiveTherapieZeiten
+    {
+        get
+        {
+            return aktiveTherapieZeiten;
+        }
+
+    }
+
+    public float latestTimeCheckedToday = 0;
+
+
     public TherapiePlan TherapiePlan
     {
         get
@@ -41,13 +69,15 @@ public class TherapiePlanManager : MonoBehaviour
             instance = this;
 
         //DontDestroyOnLoad(gameObject);
-        savePath = Application.persistentDataPath + "/therapiePlan.dat";
+        savePath = Application.persistentDataPath + "/PlanData.dat";
         //init new List
         therapiePlan = new TherapiePlan();
-        //fill new List with
+        aktiveTherapieZeiten = new List<float>();
+        //fill new List with SavedData
         LoadDataFromDisk();
         //Init Inheritance List
         therapiePlan.InitTherapieListe();
+        therapiePlan.BuildCalendar();
     }
 
     private void Start()
@@ -55,6 +85,8 @@ public class TherapiePlanManager : MonoBehaviour
         notifier = GetComponent<BasicNotification>();
         if (!hasScheduledOnStart)
             ScheduleTherapyForSetDays();
+
+        StartCoroutine(CheckTherapyPlan());
     }
 
     /**
@@ -62,9 +94,18 @@ public class TherapiePlanManager : MonoBehaviour
      */
     public void SaveDataToDisk()
     {
+        Debug.Log("Saving PlanData");
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(savePath);
-        bf.Serialize(file, therapiePlan);
+        DataToSave data;
+        data.plan = therapiePlan;
+        data.actives = aktiveTherapieZeiten;
+        data.latestTime = latestTimeCheckedToday;
+        DateTime today = DateTime.Now;
+        data.savingDay = today.Day;
+        data.savingMonth = today.Month;
+        data.savingYear = today.Year;
+        bf.Serialize(file, data);
         file.Close();
         needsToSave = false;
     }
@@ -78,7 +119,20 @@ public class TherapiePlanManager : MonoBehaviour
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(savePath, FileMode.Open);
-            therapiePlan = (TherapiePlan)bf.Deserialize(file);
+            DataToSave data = (DataToSave)bf.Deserialize(file);
+            if(data.plan != null)
+                therapiePlan = data.plan;
+            if(data.actives != null)
+                aktiveTherapieZeiten = data.actives;
+            if (DateTime.Today == new DateTime(data.savingYear, data.savingMonth, data.savingDay))
+            {
+                latestTimeCheckedToday = data.latestTime;
+                Debug.Log("SetLatest");
+            }
+            else
+            {
+                latestTimeCheckedToday = 0;
+            }
             file.Close();
         }
     }
@@ -90,7 +144,7 @@ public class TherapiePlanManager : MonoBehaviour
 
     public void OnApplicationFocus(bool focus)
     {
-        if(!focus && needsToSave)
+        if(!focus)
         {
             SaveDataToDisk();
             ScheduleTherapyForSetDays();
@@ -98,11 +152,59 @@ public class TherapiePlanManager : MonoBehaviour
     }
     public void OnApplicationPause(bool pause)
     {
-        if (pause && needsToSave)
+        if (pause)
         {
             SaveDataToDisk();
             ScheduleTherapyForSetDays();
         }
+    }
+
+    public void OnApplicationQuit()
+    {
+        SaveDataToDisk();
+        ScheduleTherapyForSetDays();
+
+    }
+
+    IEnumerator CheckTherapyPlan()
+    {
+        DateTime current = DateTime.Today;
+        int dayOfWeek = (int)current.DayOfWeek;
+        dayOfWeek = (dayOfWeek - 1) < 0 ? 6 : dayOfWeek - 1;
+
+        while (true)
+        {
+            Debug.Log("Checking for active Therapies");
+            if(current != DateTime.Today)
+            {
+                current = DateTime.Now;
+                dayOfWeek = (int)current.DayOfWeek;
+                dayOfWeek = (dayOfWeek - 1) < 0 ? 6 : dayOfWeek - 1;
+                latestTimeCheckedToday = 0;
+            }
+
+            if(therapiePlan.calendar[dayOfWeek].Count > 0)
+            {
+                float currentTime = TherapiePlan.TimeIntToFloat(current.Hour, current.Minute);
+                foreach(float time in therapiePlan.calendar[dayOfWeek].Keys)
+                {
+                    //if the time is younger than the current time by less than an hour (current: 14:30 time:13:30 - 14:30)
+                    if (time > latestTimeCheckedToday && time <= currentTime && time >= currentTime - 1.0f)
+                    {
+                        Debug.Log("Adding " + time + "to actives" + (time > latestTimeCheckedToday) + latestTimeCheckedToday);
+                        aktiveTherapieZeiten.Add(time);
+                    }
+                    latestTimeCheckedToday = time;
+                }
+            }
+
+            yield return new WaitForSeconds(checkInterval);
+        }
+    }
+
+    public void RemoveActiveTherapy(float time)
+    {
+        aktiveTherapieZeiten.Remove(time);
     }
 
 }

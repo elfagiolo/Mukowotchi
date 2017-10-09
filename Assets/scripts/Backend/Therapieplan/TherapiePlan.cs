@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-
 [System.Serializable]
 public class TherapiePlan
 {
@@ -13,6 +12,14 @@ public class TherapiePlan
         public string message;
         public System.DateTime time;
         public int therapieIndex;
+    }
+
+    [Serializable]
+    public struct TherapieInfo
+    {
+        public int index;
+        public int count;
+        public float duration;
     }
 
     [System.NonSerialized]
@@ -31,6 +38,8 @@ public class TherapiePlan
             return therapieListe;
         }
     }
+
+    public Dictionary<float, List<TherapieInfo>>[] calendar;
 
     public TherapiePlan()
     {
@@ -60,6 +69,7 @@ public class TherapiePlan
     public void AddTherapie(Therapie _therapie)
     {
         therapieListe.Add(_therapie);
+        BuildCalendar();
     }
 
     public void AddMedikament(Medikament _medikament)
@@ -83,6 +93,7 @@ public class TherapiePlan
     public void RemoveTherapie(Therapie _therapie)
     {
         therapieListe.Remove(_therapie);
+        BuildCalendar();
     }
 
     public void RemoveMedikament(Medikament _medikament)
@@ -103,8 +114,56 @@ public class TherapiePlan
         RemoveTherapie(_physiotherapie);
     }
 
+    public void BuildCalendar()
+    {
+        //Initialization
+        calendar = new Dictionary<float, List<TherapieInfo>>[7];
+        for (int i = 0; i < 7; i++)
+        {
+            calendar[i] = new Dictionary<float, List<TherapieInfo>>();
+        }
 
+        foreach (Therapie therapie in therapieListe)
+        {
+            if (therapie.Times.Count == 0)
+                continue;
 
+            int therapieIndex = therapieListe.IndexOf(therapie);
+            for (int weekday = 0; weekday < 7; weekday++)
+            {
+                if (therapie.Weekdays[weekday])
+                {
+                    for(int time = 0; time < therapie.Times.Count; time++)
+                    {
+                        float t = therapie.Times[time];
+                        TherapieInfo ti;
+                        ti.index = therapieIndex;
+                        Medikament medi = therapie as Medikament;
+                        ti.count = medi != null? medi.Counts[time] : 0;
+                        Inhalation inha = therapie as Inhalation;
+                        ti.duration = (inha != null) ? inha.Durations[time] : 0;
+
+                        if(calendar[weekday].ContainsKey(t))
+                        {
+                            calendar[weekday][t].Add(ti);
+                            //Debug.Log("Added TherapyNo" + therapieIndex + "to Day" + i + "at time " + t);
+                        }
+                        else
+                        {
+                            calendar[weekday].Add(t, new List<TherapieInfo>());
+                            calendar[weekday][t].Add(ti);
+                            //Debug.Log("Added TherapyNo" + therapieIndex + "to Day" + i + "at time " + t);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public List<TherapieInfo> GetTherapieInfoFor(int day, float time)
+    {
+        return calendar[day][time];
+    }
 
     public static float TimeIntToFloat(int _hour, int _minute)
     {
@@ -167,6 +226,7 @@ public class TherapiePlan
     public NotificationInfo[] GetTherapieForXDaysFromNow(int daysToCheck)
     {
         List<NotificationInfo> infoStack = new List<NotificationInfo>();
+        List<Therapie> therapieStack = new List<Therapie>();
         int currentDay = DateTime.Now.Day;
         infoStack.AddRange(GetTherapyForToday());
         for(int i = 1; i < daysToCheck; i++)
@@ -175,6 +235,7 @@ public class TherapiePlan
             day = day.AddDays(i);
             //Debug.Log("Checking DateTime:" + day.ToString());
             infoStack.AddRange(GetTherapiesForDay(day, false));
+
         }
 
         return infoStack.ToArray();

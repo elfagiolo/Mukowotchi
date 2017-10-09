@@ -15,6 +15,13 @@ public class Medikament : Therapie
     }
 
 	private int imageIndex;
+    public int ImageIndex
+    {
+        get
+        {
+            return imageIndex;
+        }
+    }
 
 	private float r;
 	private float g;
