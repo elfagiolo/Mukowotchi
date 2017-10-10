@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ButtonUtility : MonoBehaviour {
+public class ButtonUtility : MonoBehaviour
+{
 
     [SerializeField]
     private Vector2 spawnPosition = new Vector2(0f, 0f);

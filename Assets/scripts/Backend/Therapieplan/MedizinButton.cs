@@ -8,8 +8,11 @@ public class MedizinButton : MonoBehaviour
 
     public Sprite[] images;
 
+    public List<float> removalList;
+
     public void SpawnAllMedicine()
     {
+        removalList = new List<float>();
         TherapiePlanManager manager = TherapiePlanManager.instance;
         if (manager == null)
         {
@@ -41,13 +44,17 @@ public class MedizinButton : MonoBehaviour
                         SpriteRenderer sprite = Instantiate(medicamentPrefab).GetComponent<SpriteRenderer>();
                         sprite.sprite = images[(t as Medikament).ImageIndex];
                         sprite.color = (t as Medikament).Color;
+
                     }
+                    removalList.Add(time);
                 }
             }
-
-            manager.RemoveActiveTherapy(time);
-            
         }
+        foreach(float time in removalList)
+        {
+            manager.RemoveActiveTherapy(time);
+        }
+        removalList.Clear();
     }
 
 }

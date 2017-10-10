@@ -86,7 +86,7 @@ public class TherapiePlanManager : MonoBehaviour
         if (!hasScheduledOnStart)
             ScheduleTherapyForSetDays();
 
-        StartCoroutine(CheckTherapyPlan());
+        StartCoroutine(CoroutineCheckTherapyPlan());
     }
 
     /**
@@ -166,41 +166,56 @@ public class TherapiePlanManager : MonoBehaviour
 
     }
 
-    IEnumerator CheckTherapyPlan()
+    IEnumerator CoroutineCheckTherapyPlan()
     {
         DateTime today = DateTime.Today;
         int dayOfWeek = (int)today.DayOfWeek;
         dayOfWeek = (dayOfWeek - 1) < 0 ? 6 : dayOfWeek - 1;
 
+        CheckTherapy(today, dayOfWeek);
+        yield return new WaitForSeconds(60.0f - DateTime.Now.Second);
+
         while (true)
         {
-            Debug.Log("Checking for active Therapies");
-            if(today != DateTime.Today)
-            {
-                today = DateTime.Today;
-                dayOfWeek = (int)today.DayOfWeek;
-                dayOfWeek = (dayOfWeek - 1) < 0 ? 6 : dayOfWeek - 1;
-                latestTimeCheckedToday = 0;
-            }
-
-            if(therapiePlan.calendar[dayOfWeek].Count > 0)
-            {
-                float currentTime = TherapiePlan.TimeIntToFloat(DateTime.Now.Hour, DateTime.Now.Minute);
-                foreach(float time in therapiePlan.calendar[dayOfWeek].Keys)
-                {
-                    Debug.Log("checking " + time + " at " +  currentTime + "with latest" + latestTimeCheckedToday + "res:" + (time <= currentTime) + "|" + (time >= currentTime - 1.0f) + "|" + (time > latestTimeCheckedToday));
-                    //if the time is younger than the current time by less than an hour (current: 14:30 time:13:30 - 14:30)
-                    if (time > latestTimeCheckedToday && time <= currentTime && time >= currentTime - 1.0f)
-                    {
-                        Debug.Log("Adding " + time + "to actives" + (time > latestTimeCheckedToday) + latestTimeCheckedToday);
-                        aktiveTherapieZeiten.Add(time);
-                        latestTimeCheckedToday = time;
-                    }
-                }
-            }
-
+            CheckTherapy(today, dayOfWeek);
             yield return new WaitForSeconds(checkInterval);
         }
+    }
+
+    public void CheckTherapy(DateTime today, int dayOfWeek)
+    {
+        Debug.Log("Checking for active Therapies");
+        //If the day has changed while playing, reset the day
+        if (today != DateTime.Today)
+        {
+            today = DateTime.Today;
+            dayOfWeek = (int)today.DayOfWeek;
+            dayOfWeek = (dayOfWeek - 1) < 0 ? 6 : dayOfWeek - 1;
+            latestTimeCheckedToday = -1;
+        }
+
+        if (therapiePlan.calendar[dayOfWeek].Count > 0)
+        {
+            float currentTime = TherapiePlan.TimeIntToFloat(DateTime.Now.Hour, DateTime.Now.Minute);
+
+            float tmpLatest = latestTimeCheckedToday;
+            foreach (float time in therapiePlan.calendar[dayOfWeek].Keys)
+            {
+                Debug.Log("checking " + time + " at " + currentTime + "with latest" + latestTimeCheckedToday + "res:" + (time <= currentTime) + "|" + (time >= currentTime - 1.0f) + "|" + (time > latestTimeCheckedToday));
+                //if the time is younger than the current time by less than an hour (current: 14:30 time:13:30 - 14:30)
+                if (time > latestTimeCheckedToday && time <= currentTime && time >= currentTime - 1.0f)
+                {
+                    Debug.Log("Adding " + time + "to actives" + (time > latestTimeCheckedToday) + latestTimeCheckedToday);
+                    aktiveTherapieZeiten.Add(time);
+                    if(time > tmpLatest)
+                        tmpLatest = time;
+                }
+            }
+            latestTimeCheckedToday = tmpLatest;
+        }
+        ButtonWiggleBlinkManager.instance.CheckActiveTherapies();
+        ButtonWiggleBlinkManager.instance.CheckNeeds();
+        ButtonWiggleBlinkManager.instance.CheckKreon();
     }
 
     public void RemoveActiveTherapy(float time)

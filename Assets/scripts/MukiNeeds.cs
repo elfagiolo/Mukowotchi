@@ -35,10 +35,6 @@ public class MukiNeeds : MonoBehaviour {
         else Destroy(gameObject);
 
         savePath = Application.persistentDataPath + "/saveNeeds.dat";
-    }
-
-    void Start()
-    {
         needs = new NeedsObject();
         needs.eatDateAndTime = new int[5];
         needs.drinkDateAndTime = new int[5];
