@@ -127,7 +127,6 @@ public class Edible : MonoBehaviour  {
                     kSpawner.SpawnKreons(m_iFettwert);
                 }
                 MukiNeeds.s_instance.UpdateDateAndTime(true);
-                MukiNeeds.s_instance.Consumes(100f, true);
                 break;
             case FoodType.KREON:
                 KreonManager.s_instance.AddKreonToMouth();
@@ -140,7 +139,6 @@ public class Edible : MonoBehaviour  {
                 Muki.s_instance.SwallowWithWater();
                 KreonManager.s_instance.SwallowKreons();
                 MukiNeeds.s_instance.UpdateDateAndTime(false);
-                MukiNeeds.s_instance.Consumes(100f, false);
                 break;
         }
 
