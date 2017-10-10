@@ -189,21 +189,26 @@ public class TherapiePlanUI : MonoBehaviour
         if (_therapie is Medikament)
         {
             therapieTyp = TherapieTyp.MEDIKAMENT;
-            counts = (_therapie as Medikament).Counts;
-			FindColorIndex((_therapie as Medikament).Color);
+            Medikament medi = (_therapie as Medikament);
+            counts = medi.Counts;
+            imageIndex = medi.ImageIndex;
+            FindColorIndex(medi.Color);
 			ShowActiveColor ();
-            manager.TherapiePlan.RemoveMedikament(_therapie as Medikament);
+            manager.TherapiePlan.RemoveMedikament(medi);
         }
         else if(_therapie is Inhalation)
         {
             therapieTyp = TherapieTyp.INHALATION;
-            durations = (_therapie as Inhalation).Durations;
-            manager.TherapiePlan.RemoveInhalation(_therapie as Inhalation);
+            Inhalation inha = (_therapie as Inhalation);
+            durations = inha.Durations;
+            manager.TherapiePlan.RemoveInhalation(inha);
         }
         else
         {
+            therapieTyp = TherapieTyp.PHYSIOTHERAPIE;
             manager.TherapiePlan.RemovePhysiotherapie(_therapie as Physiotherapie);
         }
+        ShowActiveImage();
         therapiePlanCanvas.SetActive(false);
         therapieNeuCanvas.SetActive(true);
         timesListPanel.UpdateList(times, counts, durations);

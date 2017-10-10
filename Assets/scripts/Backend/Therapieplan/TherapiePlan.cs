@@ -135,15 +135,20 @@ public class TherapiePlan
                 {
                     for(int time = 0; time < therapie.Times.Count; time++)
                     {
+
                         float t = therapie.Times[time];
                         TherapieInfo ti;
                         ti.index = therapieIndex;
-                        Medikament medi = therapie as Medikament;
-                        ti.count = medi != null? medi.Counts[time] : 0;
-                        Inhalation inha = therapie as Inhalation;
-                        ti.duration = (inha != null) ? inha.Durations[time] : 0;
 
-                        if(calendar[weekday].ContainsKey(t))
+                        Medikament medi = therapie as Medikament;
+                        ti.count = (medi != null && medi.Counts.Count > 0)? medi.Counts[time] : 0;
+
+                        Inhalation inha = therapie as Inhalation;
+                        ti.duration = (inha != null && inha.Durations.Count > 0) ? inha.Durations[time] : 0;
+
+                        //Debug.Log("Adding Therapy" + therapie.Name + " medi|" + (medi != null) + " inha|" + (inha != null));
+
+                        if (calendar[weekday].ContainsKey(t))
                         {
                             calendar[weekday][t].Add(ti);
                             //Debug.Log("Added TherapyNo" + therapieIndex + "to Day" + i + "at time " + t);
