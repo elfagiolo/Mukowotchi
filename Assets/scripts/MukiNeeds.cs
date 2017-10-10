@@ -12,10 +12,22 @@ public class MukiNeeds : MonoBehaviour {
     [SerializeField]
     UnityEngine.UI.Text debugText;
     [SerializeField]
-    private bool init = false;
+    private bool debugUseMinutes = false;
 
     private string savePath;
     private NeedsObject needs;
+
+    public int HungerPoints { get
+        {
+            return DateTimeDifferenceInHours(true);
+        } }
+    public int ThirstPoints
+    {
+        get
+        {
+            return DateTimeDifferenceInHours(false);
+        }
+    }
 
     void Awake()
     {
@@ -28,34 +40,23 @@ public class MukiNeeds : MonoBehaviour {
     void Start()
     {
         needs = new NeedsObject();
-        needs.hunger = 0f;
-        needs.thirst = 0f;
         needs.eatDateAndTime = new int[5];
         needs.drinkDateAndTime = new int[5];
-        if (init)
-            SaveNeeds();
-        else
-            LoadNeeds();
+        LoadNeeds();
     }
 
     void Update()
     {
-        needs.hunger += Time.deltaTime * 10f;
-        needs.thirst += Time.deltaTime * 10f;
-
         if (debugText != null)
         {
-            debugText.text = string.Format("Hunger: {0}\n" +
-                "Letzte Mahlzeit: {1}.{2}.{3} {4}:{5}\n" +
-                "Durst: {6}\n" +
-                "Letztes Getränk: {7}.{8}.{9} {10}:{11}\n",
-                needs.hunger,
+            debugText.text = string.Format(
+                "Letzte Mahlzeit: {0}.{1}.{2} {3}:{4}\n" +
+                "Letztes Getränk: {5}.{6}.{7} {8}:{9}\n",
                 needs.eatDateAndTime[0],
                 needs.eatDateAndTime[1],
                 needs.eatDateAndTime[2],
                 needs.eatDateAndTime[3],
                 needs.eatDateAndTime[4],
-                needs.thirst,
                 needs.drinkDateAndTime[0],
                 needs.drinkDateAndTime[1],
                 needs.drinkDateAndTime[2],
@@ -64,10 +65,11 @@ public class MukiNeeds : MonoBehaviour {
                 );
         }
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            SaveNeeds();
-        }
+        //if (Input.GetKeyDown(KeyCode.D))
+        //{
+        //    print("Hungerpunkte: " + HungerPoints);
+        //    print("Durstpunkte: " + ThirstPoints);
+        //}
     }
 
     public void UpdateDateAndTime(bool updateHunger)
@@ -104,31 +106,32 @@ public class MukiNeeds : MonoBehaviour {
             file.Close();
         }
         else
-            Debug.LogWarning("Did not find the file Application.persistentDataPath + \" / saveNeeds.dat\"");
+        {
+            Debug.LogWarning("Did not find the file Application.persistentDataPath + \" / saveNeeds.dat\"\n Created one");
+            UpdateDateAndTime(true);
+            UpdateDateAndTime(false);
+            SaveNeeds();
+        }
     }
 
-    public void Consumes(float value, bool food)
+    int DateTimeDifferenceInHours(bool hunger)
     {
-        if (food)
-        {
-            needs.hunger -= value;
-            if (needs.hunger < 0f) needs.hunger = 0f;
-        }
+        int[] oldArr;
+        if (hunger) oldArr = needs.eatDateAndTime;
+        else oldArr = needs.drinkDateAndTime;
+
+        DateTime oldDate = new DateTime(oldArr[2], oldArr[1], oldArr[0], oldArr[3], oldArr[4], 0);
+        TimeSpan t = DateTime.Now - oldDate;
+        if (!debugUseMinutes)
+            return (int)Math.Floor(t.TotalHours);
         else
-        {
-            needs.thirst -= value;
-            if (needs.thirst < 0f) needs.thirst = 0f;
-        }
+            return (int)Math.Floor(t.TotalMinutes);
     }
 }
 
 [Serializable]
 public struct NeedsObject
 {
-    [SerializeField]
-    public float hunger;
-    [SerializeField]
-    public float thirst;
     [SerializeField]
     public int[] eatDateAndTime; // {tag,monat,jahr,stunde,minute}
     [SerializeField]
