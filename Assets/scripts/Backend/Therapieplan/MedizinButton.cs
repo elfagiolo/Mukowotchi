@@ -55,6 +55,7 @@ public class MedizinButton : MonoBehaviour
             manager.RemoveActiveTherapy(time);
         }
         removalList.Clear();
+        ButtonWiggleBlinkManager.instance.CheckActiveTherapies();
     }
 
 }

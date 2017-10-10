@@ -139,6 +139,8 @@ public class Edible : MonoBehaviour  {
                 Muki.s_instance.SwallowWithWater();
                 KreonManager.s_instance.SwallowKreons();
                 MukiNeeds.s_instance.UpdateDateAndTime(false);
+                ButtonWiggleBlinkManager.instance.CheckKreon();
+                ButtonWiggleBlinkManager.instance.CheckNeeds();
                 break;
         }
 

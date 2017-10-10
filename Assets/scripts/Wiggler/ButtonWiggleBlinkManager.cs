@@ -147,6 +147,25 @@ public class ButtonWiggleBlinkManager : MonoBehaviour
 
     public void CheckKreon()
     {
+        kreonWiggle = false;
 
+        KreonManager manager = KreonManager.s_instance;
+        if(manager.KreonsToConsume > 0 && manager.KreonsInMouth < manager.KreonsToConsume)
+        {
+            kreonWiggle = true;
+        }
+        if(manager.KreonsInMouth > 0 || Muki.s_instance.PillCounter > 0)
+        {
+            drinkWiggle = true;
+        }
+        if (drinkWiggle || kreonWiggle)
+            leftArrowBlink = true;
+
+        if (kreonEvent != null)
+            kreonEvent(kreonWiggle);
+        if (drinkEvent != null)
+            drinkEvent(drinkWiggle);
+        if (leftArrowEvent != null)
+            leftArrowEvent(leftArrowBlink);
     }
 }

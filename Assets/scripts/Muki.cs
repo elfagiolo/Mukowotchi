@@ -13,6 +13,13 @@ public class Muki : MonoBehaviour {
     private const int m_iKitchenID = 1;
     private Animator m_animator;
     private int m_iPillCounter = 0;
+    public int PillCounter
+    {
+        get
+        {
+            return m_iPillCounter;
+        }
+    }
     private Vector3 m_v3OriginalPosition;
     private Transform m_transform;
 
@@ -32,6 +39,7 @@ public class Muki : MonoBehaviour {
     {
         m_iPillCounter++;;
         m_animator.SetFloat("tablettenImMund", (float)m_iPillCounter);
+        ButtonWiggleBlinkManager.instance.CheckKreon();
     }
 
     public void SwallowWithWater()

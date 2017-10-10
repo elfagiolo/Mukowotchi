@@ -60,6 +60,7 @@ public class KreonManager : MonoBehaviour {
     public void AddKreonToMouth()
     {
         m_iKreonsInMouth++;
+        ButtonWiggleBlinkManager.instance.CheckKreon();
     }
 
     public void SwallowKreons()
