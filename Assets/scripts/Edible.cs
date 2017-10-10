@@ -126,6 +126,8 @@ public class Edible : MonoBehaviour  {
                 if (kSpawner != null) {
                     kSpawner.SpawnKreons(m_iFettwert);
                 }
+                if (MukiNeeds.s_instance.HungerPoints > 5)
+                    Score.s_instance.AddStar(1);
                 MukiNeeds.s_instance.UpdateDateAndTime(true);
                 break;
             case FoodType.KREON:

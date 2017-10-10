@@ -44,6 +44,12 @@ public class Muki : MonoBehaviour {
 
     public void SwallowWithWater()
     {
+        if (MukiNeeds.s_instance.ThirstPoints > 5)
+            Score.s_instance.AddStar(0);
+        if(m_iPillCounter != KreonManager.s_instance.KreonsInMouth)
+        {
+            Score.s_instance.QueueStars(3, 0);
+        }
         m_iPillCounter = 0;
         m_animator.SetFloat("tablettenImMund", 0f);
     }
