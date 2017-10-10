@@ -11,7 +11,12 @@ public class MedizinButton : MonoBehaviour
     public void SpawnAllMedicine()
     {
         TherapiePlanManager manager = TherapiePlanManager.instance;
-        foreach(float time in manager.AktiveTherapieZeiten)
+        if (manager == null)
+        {
+            Debug.LogError("No Manager on MedizinButton");
+            return;
+        }
+        foreach (float time in manager.AktiveTherapieZeiten)
         {
             int dayOfWeek = (int)System.DateTime.Now.DayOfWeek - 1;
             dayOfWeek = dayOfWeek < 0 ? 6 : dayOfWeek;
