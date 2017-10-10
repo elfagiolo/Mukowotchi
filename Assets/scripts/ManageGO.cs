@@ -17,6 +17,13 @@ public class ManageGO : MonoBehaviour {
         foreach (int i in m_scenes) m_buildIds.Add(i);
     }
 
+    void Update()
+    {
+        // backbutton called on android
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+    }
+
     // called first
     void OnEnable()
     {

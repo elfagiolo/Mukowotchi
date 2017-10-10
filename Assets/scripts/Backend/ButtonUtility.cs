@@ -43,4 +43,6 @@ public class ButtonUtility : MonoBehaviour
     {
         MukiSport.s_selectedSportTyp = (SportTyp)typ;
     }
+
+    public void Quit() { Application.Quit(); }
 }
