@@ -21,6 +21,9 @@ public class KreonManager : MonoBehaviour {
     private int m_iKreonsInMouth = 0;
     private Stack<GameObject> m_KreonStack = new Stack<GameObject>();
 
+    public int KreonsToConsume { get { return m_iKreons; } }
+    public int KreonsInMouth { get { return m_iKreonsInMouth; } }
+
     void Awake()
     {
         if (!s_instance) s_instance = this;
