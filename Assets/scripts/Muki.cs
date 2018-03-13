@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Muki : MonoBehaviour {
+public class Muki : MonoBehaviour
+{
 
     public static Muki s_instance;
 

@@ -167,7 +167,13 @@ public class TherapiePlan
 
     public List<TherapieInfo> GetTherapieInfoFor(int day, float time)
     {
-        return calendar[day][time];
+        if (calendar[day].ContainsKey(time))
+            return calendar[day][time];
+        else
+        {
+            Debug.Log("This time is not in the calendar");
+            return null;
+        }
     }
 
     public static float TimeIntToFloat(int _hour, int _minute)

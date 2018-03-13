@@ -48,6 +48,7 @@ public class ButtonWiggleBlinkManager : MonoBehaviour
         if (instance != null)
             Destroy(this);
         instance = this;
+        Screen.SetResolution(580, 900, false);
 	}
 
     // called first
@@ -97,15 +98,24 @@ public class ButtonWiggleBlinkManager : MonoBehaviour
                 dayOfWeek = dayOfWeek < 0 ? 6 : dayOfWeek;
             }
 
-            foreach (TherapiePlan.TherapieInfo therapieInfo in manager.TherapiePlan.GetTherapieInfoFor(dayOfWeek, time))
+            List<TherapiePlan.TherapieInfo> list = manager.TherapiePlan.GetTherapieInfoFor(dayOfWeek, time);
+            if(list!= null)
             {
-                Therapie t = manager.TherapiePlan.Therapien[therapieInfo.index];
-                if (therapieInfo.count != 0)
-                    mediWiggle = true;
-                else if (therapieInfo.duration != 0)
-                    inhaWiggle = true;
-                else
-                    physiWiggle = true;
+
+                foreach (TherapiePlan.TherapieInfo therapieInfo in list)
+                {
+                    Therapie t = manager.TherapiePlan.Therapien[therapieInfo.index];
+                    if (therapieInfo.count != 0)
+                        mediWiggle = true;
+                    else if (therapieInfo.duration != 0)
+                        inhaWiggle = true;
+                    else
+                        physiWiggle = true;
+                }
+            }
+            else
+            {
+                Debug.Log("This list does not exist in calendar" + dayOfWeek + "|" + time);
             }
         }
 
