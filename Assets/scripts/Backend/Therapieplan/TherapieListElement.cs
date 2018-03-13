@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//TherapieListElement.cs beschreibt ein Listenelement in der Therapieliste, das ist eine reine Anzeigeklasse, und der Inhalt wird aus dem wirklichen Therapie.cs objekt gelesen
+
 public class TherapieListElement : MonoBehaviour
 {
     public Text therapyName;

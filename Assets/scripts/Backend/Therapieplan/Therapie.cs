@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//Therapie.cs beschreibt eine einzelne Therapie mit Name, Beschreibung, den Tagen und Zeiten an denen einzunehmen ist.
 [System.Serializable]
 public class Therapie
 {

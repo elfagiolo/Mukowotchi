@@ -156,7 +156,7 @@ public class Edible : MonoBehaviour  {
         {
             m_bEating = false;
             int eating = m_mukiAnim.GetInteger("eating");
-            m_mukiAnim.SetInteger("eating", -1);
+            m_mukiAnim.SetInteger("eating", Mathf.Max(eating - 1, 0));
         }
     }
 }

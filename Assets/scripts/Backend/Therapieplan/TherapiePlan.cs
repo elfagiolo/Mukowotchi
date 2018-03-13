@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+//Diese Liste enthält alle Therapie.cs Objekte des Patienten und erstellt einen lesbaren Kalender
+
 [System.Serializable]
 public class TherapiePlan
 {
+
+    //Informationen, die für das abschicken von Notifications notwendig sind.
     public struct NotificationInfo
     {
         public string title;
@@ -14,6 +18,7 @@ public class TherapiePlan
         public int therapieIndex;
     }
 
+    //Informationen, die speicherbar sind
     [Serializable]
     public struct TherapieInfo
     {
@@ -114,6 +119,7 @@ public class TherapiePlan
         RemoveTherapie(_physiotherapie);
     }
 
+    //Aufbau des internen Therapiekalenders
     public void BuildCalendar()
     {
         //Initialization
@@ -164,6 +170,7 @@ public class TherapiePlan
             }
         }
     }
+
 
     public List<TherapieInfo> GetTherapieInfoFor(int day, float time)
     {

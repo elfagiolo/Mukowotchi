@@ -8,6 +8,8 @@ public class ButtonUtility : MonoBehaviour
 
     [SerializeField]
     private Vector2 spawnPosition = new Vector2(0f, 0f);
+    [SerializeField]
+    private float radius = 2.0f;
 
 	public void SwitchToScene(int sceneIndex)
     {
@@ -36,7 +38,9 @@ public class ButtonUtility : MonoBehaviour
 
     public void SpawnFood(GameObject prefab)
     {
-        Instantiate(prefab, spawnPosition, Quaternion.identity);
+        Vector2 point = Random.insideUnitCircle * radius;
+        Instantiate(prefab, spawnPosition + point, Quaternion.identity);
+        
     }
 
     public void SetSportTyp(int typ)

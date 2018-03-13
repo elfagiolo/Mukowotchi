@@ -5,6 +5,8 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
+
+//Informationen des Therapieplans, runtergebrochen auf speicherbare Daten
 [Serializable]
 public struct DataToSave
 {
@@ -16,7 +18,10 @@ public struct DataToSave
     public float latestTime;
 }
 
+
+
 [RequireComponent(typeof(BasicNotification))]
+//TherapiePlanManager.cs kümmert sich um das speichern und laden des Therapieplans
 public class TherapiePlanManager : MonoBehaviour
 {
     public static TherapiePlanManager instance;
@@ -89,9 +94,8 @@ public class TherapiePlanManager : MonoBehaviour
         StartCoroutine(CoroutineCheckTherapyPlan());
     }
 
-    /**
-     * Saves the save data to the disk
-     */
+    //Speichert den Therapieplan als Binärdatei
+
     public void SaveDataToDisk()
     {
         Debug.Log("Saving PlanData");
@@ -110,9 +114,7 @@ public class TherapiePlanManager : MonoBehaviour
         needsToSave = false;
     }
 
-    /**
-     * Loads the save data from the disk
-     */
+    //Lädt den Therapieplan aus einer Binärdatei
     public void LoadDataFromDisk()
     {
         if (File.Exists(savePath))
@@ -120,20 +122,27 @@ public class TherapiePlanManager : MonoBehaviour
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(savePath, FileMode.Open);
             DataToSave data = (DataToSave)bf.Deserialize(file);
-            if(data.plan != null)
+            if (data.plan != null)
                 therapiePlan = data.plan;
-            if(data.actives != null)
+            else
+                Debug.LogWarning("Die Daten enthalten keinen Therapieplan.");
+            if (data.actives != null)
                 aktiveTherapieZeiten = data.actives;
+            else
+                Debug.LogWarning("Die Daten enthalten keine aktiven Therapiezeiten.");
             if (DateTime.Today == new DateTime(data.savingYear, data.savingMonth, data.savingDay))
             {
                 latestTimeCheckedToday = data.latestTime;
-                Debug.Log("SetLatest");
             }
             else
             {
                 latestTimeCheckedToday = 0;
             }
             file.Close();
+        }
+        else
+        {
+            Debug.LogWarning("Es gibt keinen gespeicherten Therapieplan.");
         }
     }
 
