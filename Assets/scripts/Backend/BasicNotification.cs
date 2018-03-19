@@ -71,7 +71,7 @@ public class BasicNotification : MonoBehaviour
 
     public void Notify(TherapiePlan.NotificationInfo info)
     {
-        //Debug.Log("Scheduling Notification: " + info.title + "|" + info.time.DayOfWeek.ToString() + info.time.Hour + info.time.Minute);
+        Debug.Log("Scheduling Notification: " + info.title + "|" + info.time.DayOfWeek.ToString() + info.time.Hour + info.time.Minute);
         /*
 		 * Unfortunately, from Unity 5.0, providing Android resources became obsolete.
 		 * Before Unity 5.0, you can provide the name of the drawable in the folder Plugins/Android/res/drawable.
@@ -101,6 +101,7 @@ public class BasicNotification : MonoBehaviour
 
         notification.SetSticky(_sticky);
         NotificationManager.ShowNotification(_number, notification, info.time);
+        Debug.Log("Made notification no" + _number + ":" + info.title + "," + info.message + "," + info.time + "," + info.therapieIndex);
         ++_number;
     }
 }

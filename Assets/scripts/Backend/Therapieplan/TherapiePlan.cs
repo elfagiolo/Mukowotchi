@@ -225,7 +225,7 @@ public class TherapiePlan
                         info.title = therapie.Name;
                         info.message = "Muki hat jetzt eine Therapie!";
                         info.time = therapieTime;
-                        info.therapieIndex = therapie.Times.IndexOf(time);
+                        info.therapieIndex = therapieListe.IndexOf(therapie);
                         infoStack.Add(info);
                     }
                 }
@@ -244,7 +244,6 @@ public class TherapiePlan
     public NotificationInfo[] GetTherapieForXDaysFromNow(int daysToCheck)
     {
         List<NotificationInfo> infoStack = new List<NotificationInfo>();
-        List<Therapie> therapieStack = new List<Therapie>();
         int currentDay = DateTime.Now.Day;
         infoStack.AddRange(GetTherapyForToday());
         for(int i = 1; i < daysToCheck; i++)

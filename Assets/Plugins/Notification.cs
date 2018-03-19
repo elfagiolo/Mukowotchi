@@ -13,9 +13,11 @@ public class Notification
 	public Notification (string contentTitle,
 	                     string contentText)
 	{
-		if (Application.platform != RuntimePlatform.Android)
+
+        Debug.Log(contentTitle);
+
+        if (Application.platform != RuntimePlatform.Android)
 			return;
-		
 		_javaUnityNotification = new AndroidJavaObject ("com.takohi.unity.plugins.UnityNotification", 
 		                                                contentTitle, contentText); 
 	}
